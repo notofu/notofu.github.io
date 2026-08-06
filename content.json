@@ -164,12 +164,6 @@
         "sameAs": true
       },
       {
-        "label": "GitHub",
-        "description": "公開コード・制作物",
-        "url": "https://github.com/notofu",
-        "sameAs": true
-      },
-      {
         "label": "函館工業高等専門学校",
         "description": "所属機関",
         "url": "https://www.hakodate-ct.ac.jp/",
