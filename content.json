@@ -129,7 +129,7 @@
     "allWorksUrl": "https://researchmap.jp/notokaede/published_papers"
   },
   "teaching": {
-    "heading": "教育",
+    "heading": "これまでに担当した講義",
     "items": [
       {
         "title": "ヒューマンインタフェース",
@@ -137,19 +137,15 @@
       },
       {
         "title": "プログラミング",
-        "description": "C言語・Javaを用いて、基本構文、データ構造、問題分解、実装を学びます。"
-      },
-      {
-        "title": "アルゴリズム",
-        "description": "探索、整列、計算量など、問題解決のための基礎的な考え方を扱います。"
+        "description": "C言語を用いて、基本構文、データ構造、問題分解、実装を学びます。"
       },
       {
         "title": "オペレーティングシステム",
         "description": "プロセス、メモリ、ファイルシステムなど、計算機資源を管理する仕組みを扱います。"
       },
       {
-        "title": "情報工学実験",
-        "description": "実装、実験、データ分析、報告書作成、発表を通じて実践的に学びます。"
+        "title": "実験",
+        "description": "実装、実験、データ分析、レポート作成を通じて実践的に学びます。"
       }
     ]
   },
