@@ -1,0 +1,185 @@
+{
+  "site": {
+    "url": "https://notofu.github.io/",
+    "language": "ja",
+    "title": "能登 楓（Kaede Noto）| 音楽情報処理・HCI研究",
+    "description": "能登楓（Kaede Noto）の研究者個人サイト。音楽情報処理、ヒューマンコンピュータインタラクション、演奏分析、視線計測、計算モデリングに関する研究・業績・教育活動を掲載しています。",
+    "ogImage": "assets/og-image.png",
+    "themeColor": "#15324b",
+    "googleSiteVerification": ""
+  },
+  "profile": {
+    "nameJa": "能登 楓",
+    "nameEn": "Kaede Noto",
+    "position": "講師",
+    "affiliation": "函館工業高等専門学校 生産システム工学科 情報コース",
+    "affiliationEn": "National Institute of Technology, Hakodate College",
+    "degree": "博士（システム情報科学）",
+    "location": "北海道函館市",
+    "image": "assets/profile-placeholder.svg",
+    "imageAlt": "能登楓のプロフィール写真",
+    "summary": "音楽情報処理、ヒューマンコンピュータインタラクション、計算モデリングを中心に、音楽演奏における知覚・予測・学習・相互作用を研究しています。",
+    "keywords": [
+      "音楽情報処理",
+      "ヒューマンコンピュータインタラクション",
+      "演奏分析",
+      "視線計測",
+      "計算モデリング"
+    ],
+    "history": [
+      {
+        "period": "2026–",
+        "title": "講師",
+        "detail": "函館工業高等専門学校 生産システム工学科 情報コース"
+      },
+      {
+        "period": "2024–2026",
+        "title": "助教",
+        "detail": "函館工業高等専門学校 生産システム工学科 情報コース"
+      },
+      {
+        "period": "2025",
+        "title": "博士課程修了",
+        "detail": "公立はこだて未来大学大学院 システム情報科学研究科"
+      }
+    ]
+  },
+  "about": {
+    "heading": "研究概要",
+    "paragraphs": [
+      "人間の音楽演奏には、楽譜に記載された情報だけでは説明できない時間的・表現的な特徴があります。演奏データや視線データを分析し、演奏者が何を知覚し、どのように次の音を予測し、他者や環境へ適応するかを検討しています。",
+      "研究では、音楽理論に基づく特徴表現、機械学習、視線計測、数理モデルなどを組み合わせます。対象は、旋律構造の分析、演奏者の個人性、ピアノ学習、合奏における同期などです。"
+    ]
+  },
+  "research": {
+    "heading": "研究テーマ",
+    "intro": "現在取り組んでいる主な研究領域です。",
+    "areas": [
+      {
+        "title": "音楽認知モデルと旋律構造分析",
+        "description": "ゲシュタルト心理学や暗意―実現モデルなどの音楽認知理論を形式化し、旋律のまとまり、境界、繰返し構造を計算機で分析する手法を検討します。",
+        "tags": [
+          "旋律分析",
+          "音楽認知",
+          "構造分析"
+        ]
+      },
+      {
+        "title": "演奏データに基づく演奏者の個人性分析",
+        "description": "発音時刻、音量、アーティキュレーションなどの特徴から、演奏者ごとの表現傾向と識別可能性を分析します。",
+        "tags": [
+          "演奏データ",
+          "機械学習",
+          "個人性"
+        ]
+      },
+      {
+        "title": "ピアノ学習者の視線行動",
+        "description": "楽譜と鍵盤への視線配分を計測し、演奏技能、課題の難易度、学習過程との関係を検討します。",
+        "tags": [
+          "視線計測",
+          "ピアノ学習",
+          "高齢学習者"
+        ]
+      },
+      {
+        "title": "合奏におけるテンポ期待と同期",
+        "description": "演奏者が形成するテンポ期待と、他者の演奏への位相補正を分析し、合奏の同期過程を数理モデルで表現します。",
+        "tags": [
+          "引き込み",
+          "同期",
+          "Kuramotoモデル"
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "heading": "研究プロジェクト",
+    "items": [
+      {
+        "period": "2024–2026",
+        "title": "ピアノ演奏技能の習得を目的とした適応学習教材の開発と効果の検証",
+        "description": "ピアノ学習者の演奏・視線行動を分析し、技能習得を支援する適応学習教材の開発と評価に取り組みます。",
+        "url": "https://researchmap.jp/notokaede/research_projects"
+      },
+      {
+        "period": "継続中",
+        "title": "ゲシュタルト音楽認知モデルの形式化",
+        "description": "音楽のまとまりや構造に関する知覚原理を計算可能な形式で表現し、旋律分析へ応用します。",
+        "url": "https://www.hakodate-ct.ac.jp/research/seeds/"
+      }
+    ]
+  },
+  "outputs": {
+    "heading": "主要業績",
+    "intro": "業績の全一覧はResearchmapに掲載しています。",
+    "items": [
+      {
+        "year": "2026",
+        "type": "国際会議発表（Work in Progress）",
+        "venue": "ICEC 2026",
+        "title": "Analysis of the Score/Keyboard Gaze Activity of Elderly Piano Learners",
+        "authors": "Kaede Noto et al.",
+        "url": ""
+      },
+      {
+        "year": "2025",
+        "type": "査読論文",
+        "venue": "情報処理学会論文誌 66(3)",
+        "title": "探索順序・作成における制約を導入した音楽的繰返しパターン探索",
+        "authors": "能登 楓 ほか",
+        "url": ""
+      }
+    ],
+    "allWorksUrl": "https://researchmap.jp/notokaede/published_papers"
+  },
+  "teaching": {
+    "heading": "教育",
+    "items": [
+      {
+        "title": "ヒューマンインタフェース",
+        "description": "人間の知覚・認知、ユーザ中心設計、インタフェース評価を扱います。"
+      },
+      {
+        "title": "プログラミング",
+        "description": "C言語・Javaを用いて、基本構文、データ構造、問題分解、実装を学びます。"
+      },
+      {
+        "title": "アルゴリズム",
+        "description": "探索、整列、計算量など、問題解決のための基礎的な考え方を扱います。"
+      },
+      {
+        "title": "オペレーティングシステム",
+        "description": "プロセス、メモリ、ファイルシステムなど、計算機資源を管理する仕組みを扱います。"
+      },
+      {
+        "title": "情報工学実験",
+        "description": "実装、実験、データ分析、報告書作成、発表を通じて実践的に学びます。"
+      }
+    ]
+  },
+  "links": {
+    "heading": "外部リンク・連絡先",
+    "text": "研究業績の詳細、共同研究、研究交流に関する情報は、Researchmapまたは所属機関のページをご確認ください。",
+    "items": [
+      {
+        "label": "Researchmap",
+        "description": "研究業績・研究課題",
+        "url": "https://researchmap.jp/notokaede",
+        "sameAs": true
+      },
+      {
+        "label": "GitHub",
+        "description": "公開コード・制作物",
+        "url": "https://github.com/notofu",
+        "sameAs": true
+      },
+      {
+        "label": "函館工業高等専門学校",
+        "description": "所属機関",
+        "url": "https://www.hakodate-ct.ac.jp/",
+        "sameAs": false
+      }
+    ]
+  }
+}

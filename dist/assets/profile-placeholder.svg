@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title desc">
+  <title id="title">プロフィール画像プレースホルダー</title>
+  <desc id="desc">KNの文字を配置した仮画像</desc>
+  <rect width="240" height="240" rx="38" fill="#e7eef3"/>
+  <circle cx="120" cy="94" r="42" fill="#b8c9d5"/>
+  <path d="M51 210c7-45 33-71 69-71s62 26 69 71" fill="#b8c9d5"/>
+  <text x="120" y="224" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#15324b">KAEDE NOTO</text>
+</svg>
