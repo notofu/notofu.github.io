@@ -4,14 +4,14 @@
     "language": "ja",
     "title": "能登 楓（Kaede Noto）| 音楽情報処理・HCI研究",
     "description": "能登楓（Kaede Noto）の研究者個人サイト。音楽情報処理、ヒューマンコンピュータインタラクション、演奏分析、視線計測、計算モデリングに関する研究・業績・教育活動を掲載しています。",
-    "ogImage": "assets/og-image.png",
+    "ogImage": "assets/notokaede.png",
     "themeColor": "#15324b",
     "googleSiteVerification": ""
   },
   "profile": {
     "nameJa": "能登 楓",
     "nameEn": "Kaede Noto",
-    "position": "講師",
+    "position": "助教",
     "affiliation": "函館工業高等専門学校 生産システム工学科 情報コース",
     "affiliationEn": "National Institute of Technology, Hakodate College",
     "degree": "博士（システム情報科学）",
