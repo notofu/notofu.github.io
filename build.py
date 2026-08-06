@@ -34,39 +34,57 @@ def external_link(url: str, label: str, class_name: str = "") -> str:
     return f'<a{cls} href="{esc(url)}" target="_blank" rel="noopener noreferrer">{label}</a>'
 
 
-def render_terms(tags: list[str]) -> str:
+def render_tags(tags: list[str], class_name: str = "tag-list") -> str:
     if not tags:
         return ""
-    return '<p class="research-terms">' + " / ".join(esc(tag) for tag in tags) + "</p>"
+    items = "".join(f"<li>{esc(tag)}</li>" for tag in tags)
+    return f'<ul class="{esc(class_name)}">{items}</ul>'
 
 
 def render_history(items: list[dict[str, str]]) -> str:
     rows = []
     for item in items:
         rows.append(
-            '<div class="history-item">'
-            f'<div class="history-period">{esc(item["period"])}</div>'
-            '<div class="history-content">'
+            '<article class="timeline-item">'
+            f'<div class="timeline-period">{esc(item["period"])}</div>'
+            '<div class="timeline-body">'
             f'<h3>{esc(item["title"])}</h3>'
             f'<p>{esc(item["detail"])}</p>'
-            '</div></div>'
+            '</div></article>'
         )
     return "".join(rows)
 
 
 def render_research(items: list[dict]) -> str:
-    rows = []
-    for index, item in enumerate(items, start=1):
-        rows.append(
-            '<article class="research-item">'
-            f'<div class="item-number" aria-hidden="true">{index:02d}</div>'
-            '<div class="item-body">'
+    default_images = [
+        ("assets/research-melody.png", "旋律の音高推移と構造区間を表した抽象図"),
+        ("assets/research-performance.png", "演奏データと個人差を表した抽象図"),
+        ("assets/research-gaze.png", "楽譜と鍵盤への視線移動を表した抽象図"),
+        ("assets/research-ensemble.png", "複数演奏者の同期と位相関係を表した抽象図"),
+    ]
+    cards = []
+    for index, item in enumerate(items, 1):
+        default_image, default_alt = default_images[(index - 1) % len(default_images)]
+        image = item.get("image") or default_image
+        image_alt = item.get("imageAlt") or default_alt
+        image_html = ""
+        if image:
+            image_html = (
+                '<div class="research-image">'
+                f'<img src="{esc(image)}" alt="{esc(image_alt)}" width="720" height="420" loading="lazy">'
+                '</div>'
+            )
+        cards.append(
+            '<article class="research-card">'
+            f'{image_html}'
+            '<div class="research-card-body">'
+            f'<div class="research-index">0{index}</div>'
             f'<h3>{esc(item["title"])}</h3>'
             f'<p>{esc(item["description"])}</p>'
-            f'{render_terms(item.get("tags", []))}'
+            f'{render_tags(item.get("tags", []))}'
             '</div></article>'
         )
-    return "".join(rows)
+    return "".join(cards)
 
 
 def render_projects(items: list[dict]) -> str:
@@ -74,9 +92,9 @@ def render_projects(items: list[dict]) -> str:
     for item in items:
         link = external_link(item.get("url", ""), "詳細を見る", "text-link")
         rows.append(
-            '<article class="project-item">'
+            '<article class="project-row">'
             f'<div class="project-period">{esc(item["period"])}</div>'
-            '<div class="item-body">'
+            '<div class="project-content">'
             f'<h3>{esc(item["title"])}</h3>'
             f'<p>{esc(item["description"])}</p>'
             f'{link}'
@@ -90,48 +108,49 @@ def render_outputs(items: list[dict]) -> str:
     for item in items:
         title = esc(item["title"])
         if item.get("url"):
-            title = external_link(item["url"], title, "output-title-link")
-        venue = f'{esc(item["venue"])} / ' if item.get("venue") else ""
+            title = external_link(item["url"], title)
+        meta_parts = [part for part in (item.get("venue", ""), item.get("authors", "")) if part]
+        meta = " / ".join(esc(part) for part in meta_parts)
         rows.append(
-            '<article class="output-item">'
-            f'<div class="output-year">{esc(item["year"])}</div>'
-            '<div class="item-body">'
-            f'<p class="output-meta">{esc(item["type"])}</p>'
+            '<article class="output-row">'
+            '<div class="output-meta">'
+            f'<span class="output-year">{esc(item["year"])}</span>'
+            f'<span class="output-type">{esc(item["type"])}</span>'
+            '</div>'
+            '<div class="output-content">'
             f'<h3>{title}</h3>'
-            f'<p class="output-detail">{venue}{esc(item["authors"])}</p>'
+            f'<p>{meta}</p>'
             '</div></article>'
         )
     return "".join(rows)
 
 
 def render_teaching(items: list[dict]) -> str:
-    rows = []
-    for index, item in enumerate(items, start=1):
-        rows.append(
-            '<article class="teaching-item">'
-            f'<div class="item-number" aria-hidden="true">{index:02d}</div>'
-            '<div class="item-body">'
+    cards = []
+    for item in items:
+        cards.append(
+            '<article class="teaching-card">'
             f'<h3>{esc(item["title"])}</h3>'
             f'<p>{esc(item["description"])}</p>'
-            '</div></article>'
+            '</article>'
         )
-    return "".join(rows)
+    return "".join(cards)
 
 
 def render_links(items: list[dict]) -> str:
-    rows = []
+    cards = []
     for item in items:
         url = safe_url(item["url"])
-        rows.append(
-            f'<a class="external-link" href="{esc(url)}" target="_blank" rel="noopener noreferrer">'
-            '<span>'
+        cards.append(
+            f'<a class="link-card" href="{esc(url)}" target="_blank" rel="noopener noreferrer">'
+            '<span class="link-card-copy">'
             f'<strong>{esc(item["label"])}</strong>'
             f'<small>{esc(item["description"])}</small>'
             '</span>'
-            '<span class="external-arrow" aria-hidden="true">↗</span>'
+            '<span class="link-arrow" aria-hidden="true">↗</span>'
             '</a>'
         )
-    return "".join(rows)
+    return "".join(cards)
 
 
 def build_json_ld(data: dict) -> str:
@@ -144,7 +163,7 @@ def build_json_ld(data: dict) -> str:
     page_id = urljoin(site["url"], "#profile-page")
     website_id = urljoin(site["url"], "#website")
 
-    person: dict[str, object] = {
+    person = {
         "@type": "Person",
         "@id": person_id,
         "name": profile["nameJa"],
@@ -214,7 +233,7 @@ def build_html(data: dict) -> str:
         profile_image_html = (
             '<div class="profile-photo-wrap">'
             f'<img class="profile-photo" src="{esc(profile_image)}" '
-            f'alt="{esc(profile["imageAlt"])}" width="88" height="88" fetchpriority="high">'
+            f'alt="{esc(profile["imageAlt"])}" width="76" height="76" fetchpriority="high">'
             '</div>'
         )
 
@@ -225,7 +244,8 @@ def build_html(data: dict) -> str:
         ("拠点", profile["location"]),
     ]
     fact_html = "".join(
-        f'<div><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>' for label, value in facts
+        f'<div class="fact-row"><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>'
+        for label, value in facts
     )
     about_html = "".join(f"<p>{esc(p)}</p>" for p in about["paragraphs"])
     json_ld = build_json_ld(data)
@@ -234,7 +254,6 @@ def build_html(data: dict) -> str:
         f'<meta name="google-site-verification" content="{esc(verification)}">'
         if verification else ""
     )
-    keyword_text = " / ".join(esc(keyword) for keyword in profile["keywords"])
 
     return f'''<!doctype html>
 <html lang="{esc(site["language"])}">
@@ -261,8 +280,6 @@ def build_html(data: dict) -> str:
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="{esc(profile["nameJa"])}の研究者個人サイト">
-  <meta property="profile:first_name" content="Kaede">
-  <meta property="profile:last_name" content="Noto">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{esc(site["title"])}">
@@ -284,15 +301,15 @@ def build_html(data: dict) -> str:
         <span>{esc(profile["nameJa"])}</span>
         <small>{esc(profile["nameEn"])}</small>
       </a>
-      <nav class="nav desktop-nav" aria-label="主要メニュー">
+      <nav class="desktop-nav" aria-label="主要メニュー">
         <a href="#about">研究概要</a>
         <a href="#research">研究テーマ</a>
         <a href="#outputs">主要業績</a>
         <a href="#teaching">教育</a>
-        <a href="#links">リンク</a>
+        <a href="#profile">略歴</a>
       </nav>
       <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く">
-        <span></span><span></span>
+        <span></span><span></span><span></span>
       </button>
     </div>
     <nav class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="モバイルメニュー">
@@ -300,103 +317,120 @@ def build_html(data: dict) -> str:
       <a href="#research">研究テーマ</a>
       <a href="#outputs">主要業績</a>
       <a href="#teaching">教育</a>
-      <a href="#links">リンク</a>
+      <a href="#profile">略歴</a>
+      <a href="#links">外部リンク</a>
     </nav>
   </header>
 
   <main id="main">
     <section class="hero" aria-labelledby="page-title">
-      <div class="container hero-inner">
-        <div class="hero-identity">
-          <p class="hero-name-en" lang="en">{esc(profile["nameEn"])}</p>
-          <h1 id="page-title">{esc(profile["nameJa"])}</h1>
-          <p class="hero-affiliation">{esc(profile["affiliation"])}</p>
-          <p class="hero-position">{esc(profile["position"])}・{esc(profile["degree"])}</p>
+      <div class="container hero-shell">
+        <div class="identity-row">
+          {profile_image_html}
+          <div class="identity-copy">
+            <p class="identity-name"><strong>{esc(profile["nameJa"])}</strong><span lang="en">{esc(profile["nameEn"])}</span></p>
+            <p class="identity-affiliation">{esc(profile["affiliation"])}<br><span>{esc(profile["position"])}・{esc(profile["degree"])}</span></p>
+          </div>
         </div>
-        {profile_image_html}
-        <div class="hero-description">
-          <p>{esc(profile["summary"])}</p>
-          <p class="hero-fields"><span>研究分野</span>{keyword_text}</p>
+
+        <div class="hero-main">
+          <div class="hero-copy">
+            <p class="eyebrow">RESEARCHER PROFILE</p>
+            <h1 id="page-title">研究・教育活動</h1>
+            <p class="hero-summary">{esc(profile["summary"])}</p>
+            {render_tags(profile["keywords"], "keyword-list")}
+            <div class="hero-actions">
+              <a class="primary-button" href="#research">研究テーマを見る</a>
+              {external_link(outputs["allWorksUrl"], 'Researchmapで業績を見る', 'secondary-button')}
+            </div>
+          </div>
+
+          <nav class="hero-shortcuts" aria-label="主要コンテンツへのリンク">
+            <a href="#research"><span>RESEARCH</span><strong>研究テーマ</strong><small>{len(research["areas"])}件の研究領域</small></a>
+            <a href="#outputs"><span>OUTPUTS</span><strong>主要業績</strong><small>論文・国際会議発表</small></a>
+            <a href="#profile"><span>PROFILE</span><strong>略歴</strong><small>所属・学位・経歴</small></a>
+          </nav>
         </div>
       </div>
     </section>
 
-    <section class="section section--tint" id="about" aria-labelledby="about-title">
-      <div class="container section-grid">
-        <div class="section-heading">
-          <p class="section-kicker">About</p>
+    <section class="section section-soft" id="about" aria-labelledby="about-title">
+      <div class="container split-layout">
+        <div class="section-heading sticky-heading">
+          <p class="section-label">ABOUT</p>
           <h2 id="about-title">{esc(about["heading"])}</h2>
         </div>
-        <div class="section-content prose">
-          {about_html}
-          <dl class="profile-facts">{fact_html}</dl>
-        </div>
+        <div class="prose">{about_html}</div>
       </div>
     </section>
 
     <section class="section" id="research" aria-labelledby="research-title">
-      <div class="container section-grid">
-        <div class="section-heading">
-          <p class="section-kicker">Research</p>
-          <h2 id="research-title">{esc(research["heading"])}</h2>
+      <div class="container">
+        <div class="section-heading section-heading-wide">
+          <div>
+            <p class="section-label">RESEARCH</p>
+            <h2 id="research-title">{esc(research["heading"])}</h2>
+          </div>
           <p class="section-intro">{esc(research["intro"])}</p>
         </div>
-        <div class="section-content ruled-list">{render_research(research["areas"])}</div>
+        <div class="research-grid">{render_research(research["areas"])}</div>
       </div>
     </section>
 
-    <section class="section section--tint" id="projects" aria-labelledby="projects-title">
-      <div class="container section-grid">
-        <div class="section-heading">
-          <p class="section-kicker">Projects</p>
+    <section class="section section-soft" id="projects" aria-labelledby="projects-title">
+      <div class="container split-layout">
+        <div class="section-heading sticky-heading">
+          <p class="section-label">PROJECTS</p>
           <h2 id="projects-title">{esc(projects["heading"])}</h2>
         </div>
-        <div class="section-content ruled-list">{render_projects(projects["items"])}</div>
+        <div class="project-list">{render_projects(projects["items"])}</div>
       </div>
     </section>
 
     <section class="section" id="outputs" aria-labelledby="outputs-title">
-      <div class="container section-grid">
-        <div class="section-heading">
-          <p class="section-kicker">Selected Works</p>
-          <h2 id="outputs-title">{esc(outputs["heading"])}</h2>
-          <p class="section-intro">{esc(outputs["intro"])}</p>
+      <div class="container">
+        <div class="section-heading section-heading-wide">
+          <div>
+            <p class="section-label">SELECTED WORKS</p>
+            <h2 id="outputs-title">{esc(outputs["heading"])}</h2>
+          </div>
+          <div>
+            <p class="section-intro">{esc(outputs["intro"])}</p>
+            {external_link(outputs["allWorksUrl"], 'Researchmapで全件を見る', 'text-link')}
+          </div>
         </div>
-        <div class="section-content">
-          <div class="ruled-list">{render_outputs(outputs["items"])}</div>
-          {external_link(outputs["allWorksUrl"], 'Researchmapで業績一覧を見る', 'more-link')}
-        </div>
+        <div class="output-list">{render_outputs(outputs["items"])}</div>
       </div>
     </section>
 
-    <section class="section section--tint" id="teaching" aria-labelledby="teaching-title">
-      <div class="container section-grid">
+    <section class="section section-soft" id="teaching" aria-labelledby="teaching-title">
+      <div class="container">
         <div class="section-heading">
-          <p class="section-kicker">Teaching</p>
+          <p class="section-label">TEACHING</p>
           <h2 id="teaching-title">{esc(teaching["heading"])}</h2>
         </div>
-        <div class="section-content ruled-list">{render_teaching(teaching["items"])}</div>
+        <div class="teaching-grid">{render_teaching(teaching["items"])}</div>
       </div>
     </section>
 
     <section class="section" id="profile" aria-labelledby="profile-title">
-      <div class="container section-grid">
-        <div class="section-heading">
-          <p class="section-kicker">Profile</p>
+      <div class="container split-layout">
+        <div class="section-heading sticky-heading">
+          <p class="section-label">PROFILE</p>
           <h2 id="profile-title">略歴</h2>
         </div>
-        <div class="section-content history ruled-list">{render_history(profile["history"])}</div>
+        <div class="timeline">{render_history(profile["history"])}</div>
       </div>
     </section>
 
-    <section class="section section--tint" id="links" aria-labelledby="links-title">
-      <div class="container section-grid">
+    <section class="section section-contact" id="links" aria-labelledby="links-title">
+      <div class="container link-section-layout">
         <div class="section-heading">
-          <p class="section-kicker">Links</p>
+          <p class="section-label">LINKS</p>
           <h2 id="links-title">{esc(links["heading"])}</h2>
           <p class="section-intro">{esc(links["text"])}</p>
         </div>
-        <div class="section-content external-links">{render_links(links["items"])}</div>
+        <div class="link-grid">{render_links(links["items"])}</div>
       </div>
     </section>
   </main>
@@ -417,7 +451,7 @@ def build_404(data: dict) -> str:
     return f'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>ページが見つかりません</title><link rel="stylesheet" href="styles.css"></head>
-<body><main class="section"><div class="container"><h1>ページが見つかりません</h1><p>URLをご確認ください。</p><p><a href="{esc(site["url"])}">トップページへ戻る</a></p></div></main></body></html>'''
+<body><main class="error-page"><div><p class="section-label">404</p><h1>ページが見つかりません</h1><p>URLをご確認ください。</p><a class="primary-button" href="{esc(site["url"])}">トップページへ戻る</a></div></main></body></html>'''
 
 
 def main() -> None:
@@ -435,25 +469,17 @@ def main() -> None:
     shutil.copytree(ROOT / "assets", DIST / "assets")
 
     site_url = safe_url(data["site"]["url"])
-    sitemap = f'''<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>{esc(site_url)}</loc>
-    <lastmod>{date.today().isoformat()}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
-'''
-    robots = f'''User-agent: *
-Allow: /
-
-Sitemap: {urljoin(site_url, "sitemap.xml")}
-'''
+    sitemap = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f'  <url><loc>{esc(site_url)}</loc><lastmod>{date.today().isoformat()}</lastmod></url>\n'
+        '</urlset>\n'
+    )
     (DIST / "sitemap.xml").write_text(sitemap, encoding="utf-8")
+    robots = f"User-agent: *\nAllow: /\nSitemap: {urljoin(site_url, 'sitemap.xml')}\n"
     (DIST / "robots.txt").write_text(robots, encoding="utf-8")
 
-    print(f"Built {DIST / 'index.html'}")
+    print(f"Built site at: {DIST}")
 
 
 if __name__ == "__main__":
