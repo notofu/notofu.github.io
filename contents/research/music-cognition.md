@@ -1,7 +1,7 @@
 ---
 title: 音楽認知モデルと旋律構造分析
 summary: ゲシュタルト心理学や暗意―実現モデルなどの音楽認知理論を形式化し、旋律構造を計算機で分析します。
-image:
+image: assets/research-preparing-01.png
 imageAlt: 旋律構造分析の研究サムネイル
 date: 2026-08-07
 tags: 旋律分析, 音楽認知, 構造分析
