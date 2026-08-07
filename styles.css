@@ -84,7 +84,23 @@ button { font: inherit; }
 .section-title-row { display: flex; align-items: baseline; gap: 24px; margin-bottom: 18px; }
 .section-title-row h2 { margin: 0; color: var(--navy); font-size: 1.72rem; letter-spacing: -.01em; }
 .section-title-row a { color: var(--teal); text-decoration: none; font-size: .86rem; font-weight: 700; }
-.research-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 20px; }
+.research-grid {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.research-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.research-card {
+  flex: 0 0 calc((100% - 60px) / 4);
+  scroll-snap-align: start;
+}
 .research-card { min-width: 0; }
 .research-thumb-link { display: block; overflow: hidden; background: #fff; border: 1px solid #d8dee3; border-radius: 10px; box-shadow: var(--shadow-soft); text-decoration: none; }
 .research-thumb { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; transition: transform .22s ease; }
