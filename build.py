@@ -269,7 +269,7 @@ def build_home(data: dict) -> str:
     <div class="container hero-grid">
       <div class="overview-lead">
         <p class="eyebrow">Music Information Processing / HCI</p>
-        <h1>能登 楓のWebページ</h1>
+        <h1>能登 楓 のWebページ</h1>
         <p class="overview-summary">{esc(shorten(p["summary"], 90))}</p>
         <div class="overview-actions">
           <a class="text-link" href="#research">研究テーマを見る ↓</a>

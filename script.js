@@ -138,6 +138,222 @@
       });
   }
 
+  // Works page: load Researchmap public data for projects, IP rights, and academic contributions.
+  // These sections refresh on every page view, so a Researchmap update does not require a GitHub commit.
+  const rmapRoots = document.querySelectorAll('[data-rmap-achievements]');
+
+  const extractResearchmapItems = (data) => {
+    if (Array.isArray(data?.items)) return data.items;
+    if (Array.isArray(data?.['@graph'])) return data['@graph'];
+    if (Array.isArray(data)) return data;
+    return [];
+  };
+
+  const firstArrayValue = (value) => {
+    if (Array.isArray(value)) return value[0] ?? '';
+    return value ?? '';
+  };
+
+  const joinNonEmpty = (values, separator = ' / ') => values.filter(Boolean).join(separator);
+
+  const researchmapWebUrl = (permalink, type, item) => {
+    const id = item?.['rm:id'];
+    return id ? `https://researchmap.jp/${encodeURIComponent(permalink)}/${type}/${encodeURIComponent(id)}` : `https://researchmap.jp/${encodeURIComponent(permalink)}/${type}`;
+  };
+
+  const makeRmapRow = ({ period, badge, kind, title, meta, description, url }) => {
+    const article = document.createElement('article');
+    article.className = 'rmap-achievement-row';
+    article.dataset.kind = kind;
+
+    const date = document.createElement('div');
+    date.className = 'rmap-achievement-period';
+    date.textContent = period || '—';
+
+    const badgeEl = document.createElement('div');
+    badgeEl.className = 'rmap-achievement-badge';
+    badgeEl.textContent = badge;
+
+    const body = document.createElement('div');
+    body.className = 'rmap-achievement-body';
+
+    const heading = document.createElement('h3');
+    if (url) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = title || 'タイトル未登録';
+      heading.appendChild(link);
+    } else {
+      heading.textContent = title || 'タイトル未登録';
+    }
+    body.appendChild(heading);
+
+    if (meta) {
+      const metaEl = document.createElement('p');
+      metaEl.className = 'rmap-achievement-meta';
+      metaEl.textContent = meta;
+      body.appendChild(metaEl);
+    }
+
+    if (description) {
+      const desc = document.createElement('p');
+      desc.className = 'rmap-achievement-description';
+      desc.textContent = description;
+      body.appendChild(desc);
+    }
+
+    const arrow = document.createElement('div');
+    arrow.className = 'rmap-achievement-arrow';
+    arrow.setAttribute('aria-hidden', 'true');
+    arrow.textContent = '↗';
+
+    article.append(date, badgeEl, body, arrow);
+    return article;
+  };
+
+  const projectRoleLabel = (value) => ({
+    principal_investigator: '研究代表',
+    coinvestigator: '研究分担',
+    coinvestigator_not_use_grants: '連携研究者',
+    others: 'その他',
+  }[value] || '研究課題');
+
+  const propertyTypeLabel = (value) => ({
+    patent_right: '特許',
+    utility_model_right: '実用新案',
+    design_right: '意匠',
+    trademark: '商標',
+  }[value] || '産業財産権');
+
+  const academicRoleLabel = (roles) => {
+    const labels = {
+      planning_etc: '企画・運営',
+      panel_chair_etc: '座長等',
+      supervision: '監修',
+      review: '審査・評価',
+      academic_research_planning: '学術調査',
+      peer_review: '査読',
+      save_or_restore: '保存・修復',
+      others: 'その他',
+    };
+    const list = Array.isArray(roles) ? roles : (roles ? [roles] : []);
+    return list.map((role) => labels[role] || role).filter(Boolean).join('・') || '学術貢献';
+  };
+
+  const periodFromTo = (from, to) => {
+    const f = formatResearchmapDate(from);
+    const t = formatResearchmapDate(to);
+    if (f && t) return f === t ? f : `${f} – ${t}`;
+    if (f) return f;
+    if (t) return t;
+    return '';
+  };
+
+  const renderResearchProject = (item, permalink) => {
+    const grantNumber = firstArrayValue(item?.identifiers?.grant_number);
+    const meta = joinNonEmpty([
+      localizedText(item.offer_organization),
+      localizedText(item.system_name),
+      localizedText(item.category),
+      grantNumber ? `課題番号 ${grantNumber}` : '',
+    ]);
+    return makeRmapRow({
+      period: periodFromTo(item.from_date, item.to_date),
+      badge: projectRoleLabel(item.research_project_owner_role),
+      kind: 'project',
+      title: localizedText(item.research_project_title),
+      meta,
+      description: localizedText(item.description),
+      url: researchmapWebUrl(permalink, 'research_projects', item),
+    });
+  };
+
+  const renderIndustrialProperty = (item, permalink) => {
+    const number = item.patent_number || item.patent_announcement_number || item.application_number || item.patent_publication_number || '';
+    const date = item.registration_date || item.patent_announcement_date || item.application_date || item.patent_publication_date || '';
+    const meta = joinNonEmpty([
+      number,
+      localizedText(item.right_holder),
+      item.application_number && item.application_number !== number ? `出願 ${item.application_number}` : '',
+    ]);
+    return makeRmapRow({
+      period: formatResearchmapDate(date),
+      badge: propertyTypeLabel(item.industrial_property_right_type),
+      kind: 'property',
+      title: localizedText(item.industrial_property_right_title),
+      meta,
+      description: localizedText(item.description),
+      url: researchmapWebUrl(permalink, 'industrial_property_rights', item),
+    });
+  };
+
+  const renderAcademicContribution = (item, permalink) => {
+    const meta = joinNonEmpty([
+      localizedText(item.promoter),
+      localizedText(item.location),
+    ]);
+    return makeRmapRow({
+      period: periodFromTo(item.from_event_date, item.to_event_date),
+      badge: academicRoleLabel(item.academic_contribution_roles),
+      kind: 'academic',
+      title: localizedText(item.academic_contribution_title),
+      meta,
+      description: localizedText(item.description),
+      url: researchmapWebUrl(permalink, 'academic_contribution', item),
+    });
+  };
+
+  const rendererByType = {
+    research_projects: renderResearchProject,
+    industrial_property_rights: renderIndustrialProperty,
+    academic_contribution: renderAcademicContribution,
+  };
+
+  rmapRoots.forEach((root) => {
+    const type = root.dataset.rmapAchievements;
+    const permalink = root.dataset.permalink || 'notokaede';
+    const status = document.querySelector(`[data-rmap-achievement-status="${type}"]`);
+    const renderer = rendererByType[type];
+    if (!renderer) return;
+
+    const apiUrl = `https://api.researchmap.jp/${encodeURIComponent(permalink)}/${type}?limit=100&sort=-modified`;
+    fetch(apiUrl, { cache: 'no-store', headers: { Accept: 'application/json' } })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Researchmap API: ${response.status}`);
+        return response.json();
+      })
+      .then((data) => {
+        const items = extractResearchmapItems(data).filter((item) => item && item.display !== 'hidden');
+        root.replaceChildren();
+        if (!items.length) {
+          const empty = document.createElement('p');
+          empty.className = 'rmap-empty';
+          empty.textContent = '現在、Researchmapで公開されている登録はありません。';
+          root.appendChild(empty);
+          if (status) status.textContent = 'Researchmap公開情報：0件';
+          return;
+        }
+        items.forEach((item) => root.appendChild(renderer(item, permalink)));
+        if (status) status.textContent = `Researchmapから${items.length}件を自動表示`;
+      })
+      .catch((error) => {
+        console.warn(error);
+        root.replaceChildren();
+        const errorBox = document.createElement('p');
+        errorBox.className = 'rmap-error';
+        const link = document.createElement('a');
+        link.href = `https://researchmap.jp/${encodeURIComponent(permalink)}/${type}`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'Researchmapで確認する ↗';
+        errorBox.append('Researchmapの自動取得に失敗しました。 ', link);
+        root.appendChild(errorBox);
+        if (status) status.textContent = 'Researchmapを取得できませんでした';
+      });
+  });
+
   // Works page category coloring without adding maintenance fields to the HTML.
   document.querySelectorAll('.output-row').forEach((row) => {
     const text = row.querySelector('.output-type')?.textContent ?? '';
