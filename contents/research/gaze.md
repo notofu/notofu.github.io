@@ -1,7 +1,7 @@
 ---
 title: ピアノ学習者の視線行動
 summary: 楽譜と鍵盤への視線配分を計測し、演奏技能、課題の難易度、学習過程との関係を検討します。
-image:
+image: assets/research-preparing-03.png
 imageAlt: ピアノ学習者の視線行動の研究サムネイル
 date: 2026-08-07
 tags: 視線計測, ピアノ学習, 高齢学習者
