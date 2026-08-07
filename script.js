@@ -6,16 +6,50 @@
   menuButton?.addEventListener('click', () => {
     const open = mobileNav?.classList.toggle('is-open') ?? false;
     menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
   });
 
   mobileNav?.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
       mobileNav.classList.remove('is-open');
       menuButton?.setAttribute('aria-expanded', 'false');
+      menuButton?.setAttribute('aria-label', 'メニューを開く');
     });
   });
 
   if (year) year.textContent = String(new Date().getFullYear());
+
+  // Research carousel: one click = one card. Touch/trackpad scrolling also works naturally.
+  const researchSlider = document.querySelector('[data-research-slider]');
+  const researchPrev = document.querySelector('[data-research-prev]');
+  const researchNext = document.querySelector('[data-research-next]');
+
+  const cardStep = () => {
+    if (!researchSlider) return 0;
+    const card = researchSlider.querySelector('.research-card');
+    if (!card) return 0;
+    const styles = getComputedStyle(researchSlider);
+    const gap = parseFloat(styles.columnGap || styles.gap) || 20;
+    return card.getBoundingClientRect().width + gap;
+  };
+
+  const updateSliderButtons = () => {
+    if (!researchSlider) return;
+    const max = Math.max(0, researchSlider.scrollWidth - researchSlider.clientWidth - 2);
+    if (researchPrev) researchPrev.disabled = researchSlider.scrollLeft <= 2;
+    if (researchNext) researchNext.disabled = researchSlider.scrollLeft >= max;
+  };
+
+  const moveResearch = (direction) => {
+    if (!researchSlider) return;
+    researchSlider.scrollBy({ left: direction * cardStep(), behavior: 'smooth' });
+  };
+
+  researchPrev?.addEventListener('click', () => moveResearch(-1));
+  researchNext?.addEventListener('click', () => moveResearch(1));
+  researchSlider?.addEventListener('scroll', updateSliderButtons, { passive: true });
+  window.addEventListener('resize', updateSliderButtons);
+  updateSliderButtons();
 
   // Works page category coloring without adding maintenance fields to the HTML.
   document.querySelectorAll('.output-row').forEach((row) => {
@@ -27,31 +61,3 @@
     row.dataset.kind = kind;
   });
 })();
-
-
-const researchSlider = document.querySelector('.research-grid');
-const researchPrev = document.querySelector('[data-research-prev]');
-const researchNext = document.querySelector('[data-research-next]');
-
-function scrollResearch(direction) {
-  if (!researchSlider) return;
-
-  const card = researchSlider.querySelector('.research-card');
-  if (!card) return;
-
-  const gap = 20;
-  const amount = card.getBoundingClientRect().width + gap;
-
-  researchSlider.scrollBy({
-    left: direction * amount,
-    behavior: 'smooth'
-  });
-}
-
-researchPrev?.addEventListener('click', () => {
-  scrollResearch(-1);
-});
-
-researchNext?.addEventListener('click', () => {
-  scrollResearch(1);
-});

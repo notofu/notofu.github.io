@@ -80,7 +80,7 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
     mobile = "".join(f'<a href="{u}">{label}</a>' for _, u, label in links)
     return f'''<header class="site-header" id="top">
   <div class="container header-inner">
-    <a class="brand" href="{prefix}index.html">{esc(profile["nameJa"]+"のWebページ")} <small>{esc(profile["nameEn"])}</small></a>
+    <a class="brand" href="{prefix}index.html"><span>Research</span><small>&amp; Teaching</small></a>
     <nav class="desktop-nav" aria-label="主要メニュー">{nav}</nav>
     <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
   </div>
@@ -259,16 +259,15 @@ def build_home(data: dict) -> str:
 <a class="skip-link" href="#main">本文へ移動</a>
 {header(p, active="home")}
 <main id="main">
-  <section class="hero" id="profile-top">
+  <section class="hero" id="overview">
     <div class="container hero-grid">
-      <div class="profile-panel">
-        {profile_image}
-        <div class="profile-copy">
-          <h1>{esc(p["nameJa"])}</h1>
-          <p class="name-en">{esc(p["nameEn"])}</p>
-          <p class="affiliation">{esc(p["affiliation"])}　{esc(p["position"])}</p>
-          <p class="profile-short">{esc(shorten(p["summary"], 100))}</p>
-          <div class="profile-links">{external_links}</div>
+      <div class="overview-lead">
+        <p class="eyebrow">Music Information Processing / HCI</p>
+        <h1>Research &amp; Teaching</h1>
+        <p class="overview-summary">{esc(shorten(p["summary"], 90))}</p>
+        <div class="overview-actions">
+          <a class="text-link" href="#research">研究テーマを見る ↓</a>
+          <a class="text-link" href="works.html">研究業績を見る →</a>
         </div>
       </div>
       <section class="news-panel" id="news" aria-labelledby="news-title">
@@ -280,8 +279,19 @@ def build_home(data: dict) -> str:
 
   <section class="research-overview" id="research">
     <div class="container">
-      <div class="section-title-row"><h2>Research Themes</h2><a href="research/index.html">すべての研究を見る →</a></div>
-      <div class="research-grid">{render_research(research.get("areas", []))}</div>
+      <div class="section-title-row">
+        <h2>Research Themes</h2>
+        <div class="research-heading-actions">
+          <div class="research-controls" aria-label="研究テーマのスライド操作">
+            <button type="button" data-research-prev aria-label="前の研究テーマ">←</button>
+            <button type="button" data-research-next aria-label="次の研究テーマ">→</button>
+          </div>
+          <a href="research/index.html">すべての研究を見る →</a>
+        </div>
+      </div>
+      <div class="research-slider" data-research-slider>
+        {render_research(research.get("areas", []))}
+      </div>
     </div>
   </section>
 
@@ -299,14 +309,24 @@ def build_home(data: dict) -> str:
   </section>
 
   <section class="profile-section" id="profile">
+    <div class="container profile-identity">
+      <div class="profile-identity-main">
+        {profile_image}
+        <div>
+          <p class="eyebrow">Profile</p>
+          <h2>{esc(p["nameJa"])} <span>{esc(p["nameEn"])}</span></h2>
+          <p class="profile-affiliation">{esc(p["affiliation"])}　{esc(p["position"])}</p>
+          <div class="profile-links">{external_links}</div>
+        </div>
+      </div>
+    </div>
     <div class="container profile-section-grid">
       <div>
-        <h2>Profile</h2>
+        <h3>Information</h3>
         <dl class="fact-list">{fact_html}</dl>
-        <div class="link-list">{external_links}</div>
       </div>
       <div>
-        <h2>Career</h2>
+        <h3>Career</h3>
         <div>{render_history(p.get("history", []))}</div>
       </div>
     </div>
@@ -342,7 +362,7 @@ def build_research_detail(data: dict, raw: dict, index: int) -> str:
 def build_research_index(data: dict) -> str:
     p = data["profile"]
     research = data["research"]
-    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>研究テーマ | {esc(p["nameJa"])}</title><meta name="description" content="{esc(research.get("intro", "研究テーマ一覧"))}"><link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script></head><body>{header(p, prefix="../", active="research")}<main><section class="works-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><h1>Research Themes</h1><p>{esc(research.get("intro", ""))}</p></div></section><section class="research-overview"><div class="container"><div class="research-grid">{render_research(research.get("areas", []), prefix="../")}</div></div></section></main><footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
+    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>研究テーマ | {esc(p["nameJa"])}</title><meta name="description" content="{esc(research.get("intro", "研究テーマ一覧"))}"><link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script></head><body>{header(p, prefix="../", active="research")}<main><section class="works-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><h1>Research Themes</h1><p>{esc(research.get("intro", ""))}</p></div></section><section class="research-overview"><div class="container"><div class="research-grid research-grid--all">{render_research(research.get("areas", []), prefix="../")}</div></div></section></main><footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
 
 
 def update_works_header(text: str, p: dict) -> str:
