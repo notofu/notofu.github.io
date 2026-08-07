@@ -80,7 +80,7 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
     mobile = "".join(f'<a href="{u}">{label}</a>' for _, u, label in links)
     return f'''<header class="site-header" id="top">
   <div class="container header-inner">
-    <a class="brand" href="{prefix}index.html">{esc(profile["nameJa"])} <small>{esc(profile["nameEn"])}</small></a>
+    <a class="brand" href="{prefix}index.html">{esc(profile["nameJa"]+"のWebページ")} <small>{esc(profile["nameEn"])}</small></a>
     <nav class="desktop-nav" aria-label="主要メニュー">{nav}</nav>
     <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
   </div>
