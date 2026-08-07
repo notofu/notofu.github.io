@@ -26,10 +26,10 @@ CONTENT_CATEGORIES = {
 }
 
 RESEARCH_DEFAULTS = [
-    {"url": "research/music-cognition.html", "image": "assets/noto-lab-icon.png", "slug": "music-cognition"},
-    {"url": "research/performance.html", "image": "assets/noto-lab-icon.png", "slug": "performance"},
-    {"url": "research/gaze.html", "image": "assets/noto-lab-icon.png", "slug": "gaze"},
-    {"url": "research/ensemble.html", "image": "assets/noto-lab-icon.png", "slug": "ensemble"},
+    {"url": "research/music-cognition.html", "image": "assets/favicon.svg", "slug": "music-cognition"},
+    {"url": "research/performance.html", "image": "assets/favicon.svg", "slug": "performance"},
+    {"url": "research/gaze.html", "image": "assets/favicon.svg", "slug": "gaze"},
+    {"url": "research/ensemble.html", "image": "assets/favicon.svg", "slug": "ensemble"},
 ]
 
 DEFAULT_CONTACT = {
@@ -88,7 +88,7 @@ def parse_markdown_file(path: Path, category: str) -> dict | None:
     cfg = CONTENT_CATEGORIES[cat]
     fallback = not image
     if fallback:
-        image = "assets/noto-lab-icon.png"
+        image = "assets/favicon.svg"
     if not thumbnail:
         thumbnail = image
     thumbnail_source = thumbnail
@@ -227,7 +227,7 @@ def render_content_row(category: str, items: list[dict], prefix: str = "../") ->
 def research_item_data(item: dict, index: int) -> dict:
     default = RESEARCH_DEFAULTS[index] if index < len(RESEARCH_DEFAULTS) else {
         "url": f"research/theme-{index + 1}.html",
-        "image": "assets/noto-lab-icon.png",
+        "image": "assets/favicon.svg",
         "slug": f"theme-{index + 1}",
     }
     merged = dict(item)
@@ -413,7 +413,7 @@ def build_home(data: dict, content_items: list[dict] | None = None) -> str:
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
   <link rel="canonical" href="{esc(site["url"])}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="alternate icon" href="assets/noto-lab-icon.png" type="image/png">
+  <link rel="alternate icon" href="assets/favicon.svg" type="image/svg+xml">
   <meta property="og:type" content="profile"><meta property="og:title" content="{esc(site["title"])}"><meta property="og:description" content="{esc(site["description"])}"><meta property="og:image" content="{esc(og_url)}"><meta property="og:url" content="{esc(site["url"])}">
   <link rel="stylesheet" href="styles.css"><script src="script.js" defer></script>
   <script type="application/ld+json">{build_json_ld(data)}</script>
@@ -542,7 +542,7 @@ def build_content_detail(data: dict, item: dict) -> str:
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
   <link rel="canonical" href="{esc(canonical)}">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="alternate icon" href="../assets/noto-lab-icon.png" type="image/png">
+  <link rel="alternate icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script>
 </head>
 <body>
@@ -581,7 +581,7 @@ def build_research_index(data: dict, content_items: list[dict]) -> str:
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
   <link rel="canonical" href="{esc(canonical)}">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="alternate icon" href="../assets/noto-lab-icon.png" type="image/png">
+  <link rel="alternate icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script>
 </head>
 <body>
@@ -628,7 +628,7 @@ def build_teaching_page(data: dict) -> str:
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
   <link rel="canonical" href="{esc(canonical)}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="alternate icon" href="assets/noto-lab-icon.png" type="image/png">
+  <link rel="alternate icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
