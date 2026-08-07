@@ -1,7 +1,7 @@
 ---
 title: 合奏におけるテンポ期待と同期
 summary: 演奏者が形成するテンポ期待と他者への位相補正を分析し、合奏の同期過程を数理モデルで表現します。
-image:
+image: assets/research-preparing-04.png
 imageAlt: 合奏におけるテンポ同期の研究サムネイル
 date: 2026-08-07
 tags: 引き込み, 同期, Kuramotoモデル
