@@ -341,7 +341,7 @@ def build_html(data: dict) -> str:
             {render_tags(profile["keywords"], "keyword-list")}
             <div class="hero-actions">
               <a class="primary-button" href="#research">研究テーマを見る</a>
-              {external_link(outputs["allWorksUrl"], 'Researchmapで業績を見る', 'secondary-button')}
+              {external_link(outputs["allWorksUrl"], '業績一覧を見る', 'secondary-button')}
             </div>
           </div>
 
@@ -396,7 +396,7 @@ def build_html(data: dict) -> str:
           </div>
           <div>
             <p class="section-intro">{esc(outputs["intro"])}</p>
-            {external_link(outputs["allWorksUrl"], 'Researchmapで全件を見る', 'text-link')}
+            {external_link(outputs["allWorksUrl"], 'すべての業績を見る', 'text-link')}
           </div>
         </div>
         <div class="output-list">{render_outputs(outputs["items"])}</div>
@@ -465,6 +465,7 @@ def main() -> None:
     (DIST / "404.html").write_text(build_404(data), encoding="utf-8")
     shutil.copy2(ROOT / "styles.css", DIST / "styles.css")
     shutil.copy2(ROOT / "script.js", DIST / "script.js")
+    shutil.copy2(ROOT / "works.html", DIST / "works.html")
     shutil.copy2(ROOT / ".nojekyll", DIST / ".nojekyll")
     shutil.copytree(ROOT / "assets", DIST / "assets")
 
@@ -473,6 +474,7 @@ def main() -> None:
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         f'  <url><loc>{esc(site_url)}</loc><lastmod>{date.today().isoformat()}</lastmod></url>\n'
+        f'  <url><loc>{esc(urljoin(site_url, "works.html"))}</loc><lastmod>{date.today().isoformat()}</lastmod></url>\n'
         '</urlset>\n'
     )
     (DIST / "sitemap.xml").write_text(sitemap, encoding="utf-8")
