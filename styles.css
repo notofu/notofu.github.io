@@ -86,8 +86,24 @@ button { font: inherit; }
 .section-title-row a { color: var(--teal); text-decoration: none; font-size: .86rem; font-weight: 700; }
 .research-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 20px; }
 .research-card { min-width: 0; }
-.research-thumb-link { display: block; overflow: hidden; background: #fff; border: 1px solid #d8dee3; border-radius: 10px; box-shadow: var(--shadow-soft); text-decoration: none; }
-.research-thumb { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; transition: transform .22s ease; }
+.research-thumb-link {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #d8dee3;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(16,39,68,.045);
+  text-decoration: none;
+}
+
+.research-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .research-thumb-link:hover .research-thumb { transform: scale(1.012); }
 .research-card-copy { display: grid; grid-template-columns: 38px 1fr; gap: 10px; margin-top: 12px; }
 .research-number { color: var(--teal); font-weight: 500; font-size: 1.22rem; line-height: 1.35; }
