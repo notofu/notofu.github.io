@@ -13,10 +13,10 @@ DIST = ROOT / "dist"
 CONTENT_PATH = ROOT / "content.json"
 
 RESEARCH_DEFAULTS = [
-    {"url": "research/music-cognition.html", "image": "assets/research-preparing-01.png", "slug": "music-cognition"},
-    {"url": "research/performance.html", "image": "assets/research-preparing-02.png", "slug": "performance"},
-    {"url": "research/gaze.html", "image": "assets/research-preparing-03.png", "slug": "gaze"},
-    {"url": "research/ensemble.html", "image": "assets/research-preparing-04.png", "slug": "ensemble"},
+    {"url": "research/music-cognition.html", "image": "assets/noto-lab-icon.png", "slug": "music-cognition"},
+    {"url": "research/performance.html", "image": "assets/noto-lab-icon.png", "slug": "performance"},
+    {"url": "research/gaze.html", "image": "assets/noto-lab-icon.png", "slug": "gaze"},
+    {"url": "research/ensemble.html", "image": "assets/noto-lab-icon.png", "slug": "ensemble"},
 ]
 
 DEFAULT_NEWS = {
@@ -54,16 +54,22 @@ def shorten(text: str, limit: int = 78) -> str:
 def research_item_data(item: dict, index: int) -> dict:
     default = RESEARCH_DEFAULTS[index] if index < len(RESEARCH_DEFAULTS) else {
         "url": f"research/theme-{index + 1}.html",
-        "image": "assets/research-preparing-01.png",
+        "image": "assets/noto-lab-icon.png",
         "slug": f"theme-{index + 1}",
     }
     merged = dict(item)
-    merged.setdefault("url", default["url"])
-    merged.setdefault("image", default["image"])
-    merged.setdefault("imageAlt", f'{item.get("title", "研究テーマ")}のサムネイル（画像準備中）')
-    merged.setdefault("slug", default["slug"])
+    if not merged.get("url"):
+        merged["url"] = default["url"]
+    if not merged.get("image"):
+        merged["image"] = default["image"]
+        merged["_imageFallback"] = True
+    else:
+        merged["_imageFallback"] = False
+    if not merged.get("imageAlt"):
+        merged["imageAlt"] = "noto Lab" if merged["_imageFallback"] else f'{item.get("title", "研究テーマ")}のサムネイル'
+    if not merged.get("slug"):
+        merged["slug"] = default["slug"]
     return merged
-
 
 def header(profile: dict, prefix: str = "", active: str = "home") -> str:
     links = [
@@ -80,13 +86,14 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
     mobile = "".join(f'<a href="{u}">{label}</a>' for _, u, label in links)
     return f'''<header class="site-header" id="top">
   <div class="container header-inner">
-    <a class="brand" href="{prefix}index.html"><span>能登楓のWebページ</span></a>
+    <a class="brand" href="{prefix}index.html" aria-label="noto Lab ホーム">
+      <img class="brand-logo" src="{prefix}assets/noto-lab-wordmark.png" alt="noto Lab" width="141" height="30">
+    </a>
     <nav class="desktop-nav" aria-label="主要メニュー">{nav}</nav>
     <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
   </div>
   <nav class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="モバイルメニュー">{mobile}</nav>
 </header>'''
-
 
 def render_news(news: dict) -> str:
     rows = []
@@ -113,21 +120,20 @@ def render_research(items: list[dict], prefix: str = "") -> str:
         image = item["image"]
         if prefix and not is_external(image):
             image = prefix + image
-        short = shorten(item.get("shortDescription") or item.get("description", ""), 72)
+        short = shorten(item.get("shortDescription") or item.get("description", ""), 52)
+        fallback_class = " research-thumb--fallback" if item.get("_imageFallback") else ""
         cards.append(
             '<article class="research-card">'
             f'<a class="research-thumb-link" href="{esc(url)}" aria-label="{esc(item["title"])}の詳細を見る">'
-            f'<img class="research-thumb" src="{esc(image)}" alt="{esc(item["imageAlt"])}" width="720" height="510" loading="lazy">'
+            f'<img class="research-thumb{fallback_class}" src="{esc(image)}" alt="{esc(item["imageAlt"])}" width="720" height="405" loading="lazy">'
             '</a>'
             '<div class="research-card-copy">'
-            f'<div class="research-number">{i+1:02d}</div>'
-            '<div>'
+            f'<p class="research-meta">Research Theme {i+1:02d}</p>'
             f'<h3><a href="{esc(url)}">{esc(item["title"])}</a></h3>'
             f'<p>{esc(short)}</p>'
-            '</div></div></article>'
+            '</div></article>'
         )
     return "".join(cards)
-
 
 def publication_kind(type_text: str) -> tuple[str, str]:
     t = type_text or ""
@@ -250,7 +256,7 @@ def build_home(data: dict) -> str:
   <meta name="description" content="{esc(site["description"])}">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
   <link rel="canonical" href="{esc(site["url"])}">
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/noto-lab-icon.png" type="image/png">
   <meta property="og:type" content="profile"><meta property="og:title" content="{esc(site["title"])}"><meta property="og:description" content="{esc(site["description"])}"><meta property="og:image" content="{esc(og_url)}"><meta property="og:url" content="{esc(site["url"])}">
   <link rel="stylesheet" href="styles.css"><script src="script.js" defer></script>
   <script type="application/ld+json">{build_json_ld(data)}</script>
@@ -263,7 +269,7 @@ def build_home(data: dict) -> str:
     <div class="container hero-grid">
       <div class="overview-lead">
         <p class="eyebrow">Music Information Processing / HCI</p>
-        <h1>能登楓のWebページ</h1>
+        <h1>Research &amp; Teaching</h1>
         <p class="overview-summary">{esc(shorten(p["summary"], 90))}</p>
         <div class="overview-actions">
           <a class="text-link" href="#research">研究テーマを見る ↓</a>
@@ -353,16 +359,16 @@ def build_research_detail(data: dict, raw: dict, index: int) -> str:
     item = research_item_data(raw, index)
     image = "../" + item["image"] if not is_external(item["image"]) else item["image"]
     tags = "".join(f'<span>{esc(t)}</span>' for t in item.get("tags", []))
-    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{esc(item["title"])} | {esc(p["nameJa"])}</title><meta name="description" content="{esc(item.get("description", ""))}"><link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script></head><body>
+    fallback_class = " detail-thumb--fallback" if item.get("_imageFallback") else ""
+    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{esc(item["title"])} | {esc(p["nameJa"])}</title><meta name="description" content="{esc(item.get("description", ""))}"><link rel="icon" href="../assets/noto-lab-icon.png" type="image/png"><link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script></head><body>
 {header(p, prefix="../", active="research")}
-<main><section class="detail-hero"><div class="container"><p class="breadcrumb"><a href="../index.html">Home</a> / <a href="index.html">Research</a> / {esc(item["title"])}</p><div class="detail-layout"><div class="detail-copy"><h1>{esc(item["title"])}</h1><p class="lead">{esc(item.get("description", ""))}</p><div class="detail-tags">{tags}</div></div><img class="detail-thumb" src="{esc(image)}" alt="{esc(item["imageAlt"])}"></div></div></section><section class="detail-body"><div class="container detail-body-inner"><h2>研究内容</h2>{detail_body(item)}</div></section></main>
+<main><section class="detail-hero"><div class="container"><p class="breadcrumb"><a href="../index.html">Home</a> / <a href="index.html">Research</a> / {esc(item["title"])}</p><div class="detail-layout"><div class="detail-copy"><h1>{esc(item["title"])}</h1><p class="lead">{esc(item.get("description", ""))}</p><div class="detail-tags">{tags}</div></div><div class="detail-thumb-frame"><img class="detail-thumb{fallback_class}" src="{esc(image)}" alt="{esc(item["imageAlt"])}"></div></div></div></section><section class="detail-body"><div class="container detail-body-inner"><h2>研究内容</h2>{detail_body(item)}</div></section></main>
 <footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="../index.html#research">研究テーマ一覧へ戻る ←</a></div></footer></body></html>'''
-
 
 def build_research_index(data: dict) -> str:
     p = data["profile"]
     research = data["research"]
-    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>研究テーマ | {esc(p["nameJa"])}</title><meta name="description" content="{esc(research.get("intro", "研究テーマ一覧"))}"><link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script></head><body>{header(p, prefix="../", active="research")}<main><section class="works-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><h1>Research Themes</h1><p>{esc(research.get("intro", ""))}</p></div></section><section class="research-overview"><div class="container"><div class="research-grid research-grid--all">{render_research(research.get("areas", []), prefix="../")}</div></div></section></main><footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
+    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>研究テーマ | {esc(p["nameJa"])}</title><meta name="description" content="{esc(research.get("intro", "研究テーマ一覧"))}"><link rel="icon" href="../assets/noto-lab-icon.png" type="image/png"><link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script></head><body>{header(p, prefix="../", active="research")}<main><section class="works-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><h1>Research Themes</h1><p>{esc(research.get("intro", ""))}</p></div></section><section class="research-overview"><div class="container"><div class="research-grid research-grid--all">{render_research(research.get("areas", []), prefix="../")}</div></div></section></main><footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
 
 
 def update_works_header(text: str, p: dict) -> str:
