@@ -95,6 +95,7 @@ def parse_markdown_file(path: Path, category: str) -> dict | None:
     title = str(meta.get("title", path.stem)).strip()
     summary = str(meta.get("summary", "")).strip()
     image = str(meta.get("image", "")).strip()
+    thumbnail = str(meta.get("thumbnail", "")).strip()
     tags = meta.get("tags", [])
     if isinstance(tags, str):
         tags = [x.strip() for x in tags.split(",") if x.strip()]
@@ -105,6 +106,8 @@ def parse_markdown_file(path: Path, category: str) -> dict | None:
     fallback = not image
     if fallback:
         image = "assets/noto-lab-icon.png"
+    if not thumbnail:
+        thumbnail = image
     order_raw = meta.get("order", 9999)
     try:
         order = int(order_raw)
@@ -115,6 +118,7 @@ def parse_markdown_file(path: Path, category: str) -> dict | None:
         "summary": summary,
         "description": summary,
         "image": image,
+        "thumbnail": thumbnail,
         "imageAlt": str(meta.get("imageAlt", "noto Lab" if fallback else f"{title}のサムネイル")),
         "date": str(meta.get("date", "")),
         "tags": tags,
@@ -140,6 +144,7 @@ def fallback_research_items(data: dict) -> list[dict]:
             "summary": old.get("shortDescription") or old.get("description", ""),
             "description": old.get("description", ""),
             "image": old["image"],
+            "thumbnail": old.get("thumbnail") or old["image"],
             "imageAlt": old["imageAlt"],
             "date": "",
             "tags": old.get("tags", []),
@@ -262,7 +267,7 @@ def render_content_cards(items: list[dict], prefix: str = "", include_category: 
     cards = []
     for item in items:
         url = local_url(item["url"], prefix)
-        image = local_url(item["image"], prefix)
+        image = local_url(item.get("thumbnail") or item["image"], prefix)
         fallback = " research-thumb--fallback" if item.get("_imageFallback") else ""
         meta = render_category_badge(item) if include_category else ""
         if item.get("date"):
@@ -270,11 +275,11 @@ def render_content_cards(items: list[dict], prefix: str = "", include_category: 
         cards.append(
             '<article class="research-card content-card">'
             f'<a class="research-thumb-link" href="{esc(url)}" aria-label="{esc(item["title"])}の詳細を見る">'
-            f'<img class="research-thumb{fallback}" src="{esc(image)}" alt="{esc(item["imageAlt"])}" width="720" height="405" loading="lazy">'
+            f'<img class="research-thumb{fallback}" src="{esc(image)}" alt="{esc(item["imageAlt"])}" width="480" height="270" loading="lazy" decoding="async" fetchpriority="low">'
             '</a>'
             '<div class="research-card-copy">'
-            f'<div class="content-card-meta">{meta}</div>'
             f'<h3><a href="{esc(url)}">{esc(item["title"])}</a></h3>'
+            f'<div class="content-card-meta">{meta}</div>'
             f'<p>{esc(shorten(item.get("summary", ""), 58))}</p>'
             '</div></article>'
         )
@@ -295,7 +300,7 @@ def render_content_row(category: str, items: list[dict], prefix: str = "../") ->
             '</div>'
         )
     return (
-        f'<section class="content-row content-row--{esc(cfg["class"])}" data-content-row>'
+        f'<section class="content-row content-row--{esc(cfg["class"])}" id="{esc(category)}" data-content-row>'
         '<div class="content-row-head"><div>'
         '<span class="content-row-mark" aria-hidden="true"></span>'
         f'<h2>{esc(cfg["label"])}</h2></div>{controls}</div>'
@@ -656,7 +661,7 @@ def build_research_index(data: dict, content_items: list[dict]) -> str:
 <a class="skip-link" href="#main">本文へ移動</a>
 {header(p, prefix="../", active="research")}
 <main id="main">
-  <section class="works-hero content-hub-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1>Research</h1><p>研究テーマ、卒業研究、Blogをカテゴリごとに掲載しています。サムネイルまたはタイトルを選ぶと詳細ページへ移動します。</p></div></section>
+  <section class="works-hero content-hub-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1>Research</h1><p>研究テーマ、卒業研究、Blogをまとめています。気になる項目から詳細をご覧ください。</p><nav class="content-filter-nav" aria-label="Researchカテゴリ"><a href="#research">研究テーマ</a><a href="#graduation">卒業研究</a><a href="#blog">Blog</a></nav></div></section>
   <section class="content-hub"><div class="container">{rows}</div></section>
 </main>
 <footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer>
