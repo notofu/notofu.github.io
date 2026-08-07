@@ -51,7 +51,7 @@
   window.addEventListener('resize', updateSliderButtons);
   updateSliderButtons();
 
-  // Teaching page: load public Researchmap teaching_experience records.
+  // Teaching page: load public researchmap teaching_experience records.
   // A static fallback remains in the HTML if the API is unavailable.
   const teachingRoot = document.querySelector('[data-researchmap-teaching]');
   const teachingStatus = document.querySelector('[data-rmap-status]');
@@ -62,7 +62,7 @@
     return value.ja || value.en || '';
   };
 
-  const formatResearchmapDate = (value) => {
+  const formatresearchmapDate = (value) => {
     if (!value) return '';
     const text = String(value).trim();
     if (!text) return '';
@@ -72,8 +72,8 @@
   };
 
   const teachingPeriod = (item) => {
-    const from = formatResearchmapDate(item.from_date);
-    const to = formatResearchmapDate(item.to_date);
+    const from = formatresearchmapDate(item.from_date);
+    const to = formatresearchmapDate(item.to_date);
     if (from && to) return `${from} – ${to}`;
     if (from) return `${from} – 現在`;
     if (to) return `– ${to}`;
@@ -121,28 +121,28 @@
 
     fetch(apiUrl, { headers: { Accept: 'application/json' } })
       .then((response) => {
-        if (!response.ok) throw new Error(`Researchmap API: ${response.status}`);
+        if (!response.ok) throw new Error(`researchmap API: ${response.status}`);
         return response.json();
       })
       .then((data) => {
         const items = Array.isArray(data.items) ? data.items : [];
-        if (!items.length) throw new Error('Researchmapに公開中の担当科目がありません');
+        if (!items.length) throw new Error('researchmapに公開中の担当科目がありません');
 
         teachingRoot.replaceChildren();
         items.forEach((item) => teachingRoot.appendChild(makeTeachingCourse(item)));
-        if (teachingStatus) teachingStatus.textContent = `Researchmapから${items.length}件を表示中`;
+        if (teachingStatus) teachingStatus.textContent = `researchmapから${items.length}件を表示中`;
       })
       .catch((error) => {
         console.warn(error);
-        if (teachingStatus) teachingStatus.textContent = 'Researchmapを取得できないため、サイト登録情報を表示中';
+        if (teachingStatus) teachingStatus.textContent = 'researchmapを取得できないため、サイト登録情報を表示中';
       });
   }
 
-  // Works page: load Researchmap public data for projects, IP rights, and academic contributions.
-  // These sections refresh on every page view, so a Researchmap update does not require a GitHub commit.
+  // Works page: load researchmap public data for projects, IP rights, and academic contributions.
+  // These sections refresh on every page view, so a researchmap update does not require a GitHub commit.
   const rmapRoots = document.querySelectorAll('[data-rmap-achievements]');
 
-  const extractResearchmapItems = (data) => {
+  const extractresearchmapItems = (data) => {
     if (Array.isArray(data?.items)) return data.items;
     if (Array.isArray(data?.['@graph'])) return data['@graph'];
     if (Array.isArray(data)) return data;
@@ -243,8 +243,8 @@
   };
 
   const periodFromTo = (from, to) => {
-    const f = formatResearchmapDate(from);
-    const t = formatResearchmapDate(to);
+    const f = formatresearchmapDate(from);
+    const t = formatresearchmapDate(to);
     if (f && t) return f === t ? f : `${f} – ${t}`;
     if (f) return f;
     if (t) return t;
@@ -279,7 +279,7 @@
       item.application_number && item.application_number !== number ? `出願 ${item.application_number}` : '',
     ]);
     return makeRmapRow({
-      period: formatResearchmapDate(date),
+      period: formatresearchmapDate(date),
       badge: propertyTypeLabel(item.industrial_property_right_type),
       kind: 'property',
       title: localizedText(item.industrial_property_right_title),
@@ -321,22 +321,22 @@
     const apiUrl = `https://api.researchmap.jp/${encodeURIComponent(permalink)}/${type}?limit=100&sort=-modified`;
     fetch(apiUrl, { cache: 'no-store', headers: { Accept: 'application/json' } })
       .then((response) => {
-        if (!response.ok) throw new Error(`Researchmap API: ${response.status}`);
+        if (!response.ok) throw new Error(`researchmap API: ${response.status}`);
         return response.json();
       })
       .then((data) => {
-        const items = extractResearchmapItems(data).filter((item) => item && item.display !== 'hidden');
+        const items = extractresearchmapItems(data).filter((item) => item && item.display !== 'hidden');
         root.replaceChildren();
         if (!items.length) {
           const empty = document.createElement('p');
           empty.className = 'rmap-empty';
-          empty.textContent = '現在、Researchmapで公開されている登録はありません。';
+          empty.textContent = '現在、researchmapで公開されている登録はありません。';
           root.appendChild(empty);
-          if (status) status.textContent = 'Researchmap公開情報：0件';
+          if (status) status.textContent = 'researchmap公開情報：0件';
           return;
         }
         items.forEach((item) => root.appendChild(renderer(item, permalink)));
-        if (status) status.textContent = `Researchmapから${items.length}件を自動表示`;
+        if (status) status.textContent = `researchmapから${items.length}件を自動表示`;
       })
       .catch((error) => {
         console.warn(error);
@@ -347,10 +347,10 @@
         link.href = `https://researchmap.jp/${encodeURIComponent(permalink)}/${type}`;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-        link.textContent = 'Researchmapで確認する ↗';
-        errorBox.append('Researchmapの自動取得に失敗しました。 ', link);
+        link.textContent = 'researchmapで確認する ↗';
+        errorBox.append('researchmapの自動取得に失敗しました。 ', link);
         root.appendChild(errorBox);
-        if (status) status.textContent = 'Researchmapを取得できませんでした';
+        if (status) status.textContent = 'researchmapを取得できませんでした';
       });
   });
 
