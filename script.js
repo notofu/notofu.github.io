@@ -27,3 +27,31 @@
     row.dataset.kind = kind;
   });
 })();
+
+
+const researchSlider = document.querySelector('.research-grid');
+const researchPrev = document.querySelector('[data-research-prev]');
+const researchNext = document.querySelector('[data-research-next]');
+
+function scrollResearch(direction) {
+  if (!researchSlider) return;
+
+  const card = researchSlider.querySelector('.research-card');
+  if (!card) return;
+
+  const gap = 20;
+  const amount = card.getBoundingClientRect().width + gap;
+
+  researchSlider.scrollBy({
+    left: direction * amount,
+    behavior: 'smooth'
+  });
+}
+
+researchPrev?.addEventListener('click', () => {
+  scrollResearch(-1);
+});
+
+researchNext?.addEventListener('click', () => {
+  scrollResearch(1);
+});
