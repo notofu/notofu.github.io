@@ -363,4 +363,32 @@
     else if (/紀要|研究報告/.test(text)) kind = 'report';
     row.dataset.kind = kind;
   });
+
+
+  // Research hub: independent horizontal sliders for Research / Graduation / Blog.
+  document.querySelectorAll('[data-content-row]').forEach((row) => {
+    const slider = row.querySelector('[data-content-slider]');
+    const prev = row.querySelector('[data-content-prev]');
+    const next = row.querySelector('[data-content-next]');
+    if (!slider || !prev || !next) return;
+
+    const step = () => {
+      const card = slider.querySelector('.content-card');
+      if (!card) return slider.clientWidth;
+      const gap = parseFloat(getComputedStyle(slider).gap) || 0;
+      return card.getBoundingClientRect().width + gap;
+    };
+
+    const update = () => {
+      const max = Math.max(0, slider.scrollWidth - slider.clientWidth - 2);
+      prev.disabled = slider.scrollLeft <= 2;
+      next.disabled = slider.scrollLeft >= max;
+    };
+
+    prev.addEventListener('click', () => slider.scrollBy({ left: -step(), behavior: 'smooth' }));
+    next.addEventListener('click', () => slider.scrollBy({ left: step(), behavior: 'smooth' }));
+    slider.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    requestAnimationFrame(update);
+  });
 })();
