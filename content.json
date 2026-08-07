@@ -89,19 +89,19 @@
     ]
   },
   "projects": {
-    "heading": "研究プロジェクト",
+    "heading": "共同研究・競争的資金等の研究課題",
     "items": [
+      {
+        "period": "2026–2029",
+        "title": "内的リズムと動作リズムの分離推定に基づく引き込み現象の基盤的分析",
+        "description": "合奏時に演奏者同士のテンポが一致していく'引き込み現象'について研究しています。特に演奏者固有のリズムと楽曲固有のリズムを分離して推定することで、引き込みが生じる仕組みや演奏者ごとの特徴を分析しています。",
+        "url": "https://kaken.nii.ac.jp/ja/grant/KAKENHI-PROJECT-26K21413/"
+      },
       {
         "period": "2024–2026",
         "title": "ピアノ演奏技能の習得を目的とした適応学習教材の開発と効果の検証",
-        "description": "ピアノ学習者の演奏・視線行動を分析し、技能習得を支援する適応学習教材の開発と評価に取り組みます。",
-        "url": "https://researchmap.jp/notokaede/research_projects"
-      },
-      {
-        "period": "継続中",
-        "title": "ゲシュタルト音楽認知モデルの形式化",
-        "description": "音楽のまとまりや構造に関する知覚原理を計算可能な形式で表現し、旋律分析へ応用します。",
-        "url": "https://www.hakodate-ct.ac.jp/research/seeds/"
+        "description": "音楽のまとまりや構造に関する知覚原理を計算可能な形式で表現し、楽曲の編曲へ応用します。",
+        "url": "https://kaken.nii.ac.jp/ja/grant/KAKENHI-PROJECT-24K22787/"
       }
     ]
   },
