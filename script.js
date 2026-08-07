@@ -391,4 +391,23 @@
     window.addEventListener('resize', update);
     requestAnimationFrame(update);
   });
+
+
+  // Static GitHub Pages contact form: compose a mail in the visitor's mail app.
+  const contactForm = document.querySelector('[data-contact-form]');
+  contactForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!contactForm.reportValidity()) return;
+
+    const data = new FormData(contactForm);
+    const user = contactForm.dataset.emailUser || '';
+    const domain = contactForm.dataset.emailDomain || '';
+    const to = `${user}@${domain}`;
+    const name = String(data.get('name') || '').trim();
+    const from = String(data.get('email') || '').trim();
+    const subject = String(data.get('subject') || '').trim();
+    const message = String(data.get('message') || '').trim();
+    const body = [`お名前: ${name}`, `返信先: ${from}`, '', message].join('\n');
+    window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
 })();

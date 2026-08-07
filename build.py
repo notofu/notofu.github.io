@@ -6,6 +6,8 @@ import json
 import re
 import shutil
 from datetime import date
+
+from PIL import Image, ImageOps
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
@@ -35,6 +37,16 @@ DEFAULT_NEWS = {
     ],
 }
 
+DEFAULT_CONTACT = {
+    "emailUser": "notokaede",
+    "emailDomain": "gmail.com",
+    "displayEmail": "notokaede [at] gmail.com",
+    "institution": "函館工業高等専門学校 生産システム工学科 情報コース",
+    "postalCode": "〒042-8501",
+    "address": "北海道函館市戸倉町14-1",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=%E5%87%BD%E9%A4%A8%E5%B7%A5%E6%A5%AD%E9%AB%98%E7%AD%89%E5%B0%82%E9%96%80%E5%AD%A6%E6%A0%A1",
+}
+
 
 def esc(value: object) -> str:
     return html.escape(str(value), quote=True)
@@ -58,6 +70,112 @@ def shorten(text: str, limit: int = 78) -> str:
         return text
     return text[: limit - 1].rstrip("、。 ,") + "…"
 
+
+THUMB_SMALL_SIZE = (320, 180)
+THUMB_LARGE_SIZE = (640, 360)
+DETAIL_MAX_SIZE = (1280, 1280)
+PROFILE_SIZE = (296, 296)
+
+
+def generated_image_paths(category: str, slug: str) -> dict[str, str]:
+    base = f"assets/generated/{category}-{slug}"
+    return {
+        "small": f"{base}-320.webp",
+        "large": f"{base}-640.webp",
+        "detail": f"{base}-detail.webp",
+    }
+
+
+def _flatten_alpha(im: Image.Image) -> Image.Image:
+    if "A" not in im.getbands():
+        return im.convert("RGB")
+    rgba = im.convert("RGBA")
+    bg = Image.new("RGB", rgba.size, "white")
+    bg.paste(rgba, mask=rgba.getchannel("A"))
+    return bg
+
+
+def generate_crop_webp(source_url: str, output_url: str, size: tuple[int, int], quality: int, contain: bool = False) -> bool:
+    """Generate a small WebP used by card/list thumbnails."""
+    if not source_url or is_external(source_url):
+        return False
+    source = ROOT / source_url
+    if not source.exists() or source.suffix.lower() == ".svg":
+        return False
+    output = DIST / output_url
+    output.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with Image.open(source) as raw:
+            raw = ImageOps.exif_transpose(raw)
+            if contain:
+                canvas = Image.new("RGB", size, "white")
+                thumb = raw.convert("RGBA") if "A" in raw.getbands() else raw.convert("RGB")
+                thumb.thumbnail(size, Image.Resampling.LANCZOS)
+                x = (size[0] - thumb.width) // 2
+                y = (size[1] - thumb.height) // 2
+                if thumb.mode == "RGBA":
+                    canvas.paste(thumb, (x, y), thumb)
+                else:
+                    canvas.paste(thumb, (x, y))
+                out = canvas
+            else:
+                out = ImageOps.fit(_flatten_alpha(raw), size, method=Image.Resampling.LANCZOS, centering=(0.5, 0.5))
+            out.save(output, format="WEBP", quality=quality, method=6, optimize=True)
+        return True
+    except (OSError, ValueError) as exc:
+        print(f"[image] skipped {source_url}: {exc}")
+        return False
+
+
+def generate_detail_webp(source_url: str, output_url: str, quality: int = 70) -> bool:
+    """Generate a reasonably sharp but much lighter image for article/detail pages."""
+    if not source_url or is_external(source_url):
+        return False
+    source = ROOT / source_url
+    if not source.exists() or source.suffix.lower() == ".svg":
+        return False
+    output = DIST / output_url
+    output.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with Image.open(source) as raw:
+            raw = ImageOps.exif_transpose(raw)
+            out = _flatten_alpha(raw)
+            out.thumbnail(DETAIL_MAX_SIZE, Image.Resampling.LANCZOS)
+            out.save(output, format="WEBP", quality=quality, method=6, optimize=True)
+        return True
+    except (OSError, ValueError) as exc:
+        print(f"[image] skipped {source_url}: {exc}")
+        return False
+
+
+def prepare_content_images(items: list[dict]) -> None:
+    """Create tiny list thumbnails and a lighter detail image at build time."""
+    for item in items:
+        source = item.get("_thumbnailSource") or item.get("image", "")
+        if not source or is_external(source):
+            item["thumbnailSmall"] = source
+            item["thumbnailLarge"] = source
+            item["detailImage"] = item.get("image", source)
+            continue
+        paths = generated_image_paths(item["category"], item["slug"])
+        contain = bool(item.get("_imageFallback"))
+        ok_small = generate_crop_webp(source, paths["small"], THUMB_SMALL_SIZE, 42, contain=contain)
+        ok_large = generate_crop_webp(source, paths["large"], THUMB_LARGE_SIZE, 48, contain=contain)
+        detail_source = item.get("image", source)
+        ok_detail = generate_detail_webp(detail_source, paths["detail"], 70)
+        item["thumbnailSmall"] = paths["small"] if ok_small else source
+        item["thumbnailLarge"] = paths["large"] if ok_large else item["thumbnailSmall"]
+        item["detailImage"] = paths["detail"] if ok_detail else detail_source
+
+
+def prepare_profile_image(data: dict) -> None:
+    profile = data.get("profile", {})
+    source = profile.get("image", "")
+    if not source or is_external(source):
+        return
+    output_url = "assets/generated/profile.webp"
+    if generate_crop_webp(source, output_url, PROFILE_SIZE, 60, contain=False):
+        profile["_optimizedImage"] = output_url
 
 
 def _front_value(value: str):
@@ -108,6 +226,7 @@ def parse_markdown_file(path: Path, category: str) -> dict | None:
         image = "assets/noto-lab-icon.png"
     if not thumbnail:
         thumbnail = image
+    thumbnail_source = thumbnail
     order_raw = meta.get("order", 9999)
     try:
         order = int(order_raw)
@@ -118,7 +237,8 @@ def parse_markdown_file(path: Path, category: str) -> dict | None:
         "summary": summary,
         "description": summary,
         "image": image,
-        "thumbnail": thumbnail,
+        "thumbnail": thumbnail_source,
+        "_thumbnailSource": thumbnail_source,
         "imageAlt": str(meta.get("imageAlt", "noto Lab" if fallback else f"{title}のサムネイル")),
         "date": str(meta.get("date", "")),
         "tags": tags,
@@ -145,6 +265,7 @@ def fallback_research_items(data: dict) -> list[dict]:
             "description": old.get("description", ""),
             "image": old["image"],
             "thumbnail": old.get("thumbnail") or old["image"],
+            "_thumbnailSource": old.get("thumbnail") or old["image"],
             "imageAlt": old["imageAlt"],
             "date": "",
             "tags": old.get("tags", []),
@@ -267,7 +388,8 @@ def render_content_cards(items: list[dict], prefix: str = "", include_category: 
     cards = []
     for item in items:
         url = local_url(item["url"], prefix)
-        image = local_url(item.get("thumbnail") or item["image"], prefix)
+        small = local_url(item.get("thumbnailSmall") or item.get("thumbnail") or item["image"], prefix)
+        large = local_url(item.get("thumbnailLarge") or item.get("thumbnail") or item["image"], prefix)
         fallback = " research-thumb--fallback" if item.get("_imageFallback") else ""
         meta = render_category_badge(item) if include_category else ""
         if item.get("date"):
@@ -275,7 +397,7 @@ def render_content_cards(items: list[dict], prefix: str = "", include_category: 
         cards.append(
             '<article class="research-card content-card">'
             f'<a class="research-thumb-link" href="{esc(url)}" aria-label="{esc(item["title"])}の詳細を見る">'
-            f'<img class="research-thumb{fallback}" src="{esc(image)}" alt="{esc(item["imageAlt"])}" width="480" height="270" loading="lazy" decoding="async" fetchpriority="low">'
+            f'<img class="research-thumb{fallback}" src="{esc(small)}" srcset="{esc(small)} 320w, {esc(large)} 640w" sizes="(max-width: 760px) 120px, 220px" alt="{esc(item["imageAlt"])}" width="320" height="180" loading="lazy" decoding="async" fetchpriority="low">'
             '</a>'
             '<div class="research-card-copy">'
             f'<h3><a href="{esc(url)}">{esc(item["title"])}</a></h3>'
@@ -336,6 +458,7 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
         ("publications", f"{prefix}works.html", "Publications"),
         ("teaching", f"{prefix}teaching.html", "Teaching"),
         ("profile", f"{prefix}index.html#profile", "Profile"),
+        ("contact", f"{prefix}index.html#contact", "Contact"),
     ]
     nav = "".join(
         f'<a href="{u}" class="{"is-active" if key == active else ""}">{label}</a>'
@@ -468,6 +591,18 @@ def build_json_ld(data: dict) -> str:
         "affiliation": {"@type": "CollegeOrUniversity", "name": p["affiliationEn"], "url": "https://www.hakodate-ct.ac.jp/"},
         "knowsAbout": p.get("keywords", []),
         "sameAs": same_as,
+        "workLocation": {
+            "@type": "Place",
+            "name": "函館工業高等専門学校",
+            "address": {
+                "@type": "PostalAddress",
+                "postalCode": "042-8501",
+                "addressRegion": "北海道",
+                "addressLocality": "函館市",
+                "streetAddress": "戸倉町14-1",
+                "addressCountry": "JP",
+            },
+        },
     }
     if p.get("image"):
         person["image"] = urljoin(site["url"], p["image"])
@@ -481,20 +616,24 @@ def build_json_ld(data: dict) -> str:
     return json.dumps(graph, ensure_ascii=False, indent=2).replace("</", "<\\/")
 
 
-def build_home(data: dict) -> str:
+def build_home(data: dict, content_items: list[dict] | None = None) -> str:
     site = data["site"]
     p = data["profile"]
     research = data["research"]
-    content_items = load_content_items(data)
+    if content_items is None:
+        content_items = load_content_items(data)
     research_items = [x for x in content_items if x["category"] == "research"]
     outputs = data["outputs"]
     teaching = data["teaching"]
     links = data.get("links", {}).get("items", [])
     news = data.get("news") or DEFAULT_NEWS
+    contact = dict(DEFAULT_CONTACT)
+    contact.update(data.get("contact") or {})
 
     profile_image = ""
-    if p.get("image"):
-        profile_image = f'<img class="profile-photo" src="{esc(p["image"])}" alt="{esc(p.get("imageAlt", p["nameJa"]))}" width="148" height="148" fetchpriority="high">'
+    profile_src = p.get("_optimizedImage") or p.get("image")
+    if profile_src:
+        profile_image = f'<img class="profile-photo" src="{esc(profile_src)}" alt="{esc(p.get("imageAlt", p["nameJa"]))}" width="148" height="148" loading="lazy" decoding="async">'
 
     external_links = "".join(
         href(x.get("url", ""), esc(x.get("label", "")) + " ↗") for x in links[:3]
@@ -529,7 +668,7 @@ def build_home(data: dict) -> str:
     <div class="container hero-grid">
       <div class="overview-lead">
         <p class="eyebrow">Music Information Processing / HCI</p>
-        <h1>能登 楓 のWebページ</h1>
+        <h1>能登 楓 のWebサイト/h1>
         <p class="overview-summary">{esc(shorten(p["summary"], 90))}</p>
         <div class="overview-actions">
           <a class="text-link" href="#research">研究テーマを見る ↓</a>
@@ -597,6 +736,30 @@ def build_home(data: dict) -> str:
       </div>
     </div>
   </section>
+
+  <section class="contact-section" id="contact">
+    <div class="container contact-grid">
+      <div class="contact-info">
+        <p class="eyebrow">Contact</p>
+        <h2>お問い合わせ</h2>
+        <p class="contact-lead">研究、共同研究、教育活動などに関するご連絡はこちらからお願いします。</p>
+        <dl class="contact-details">
+          <div><dt>Email</dt><dd>{esc(contact.get("displayEmail", ""))}</dd></div>
+          <div><dt>Affiliation</dt><dd>{esc(contact.get("institution", ""))}</dd></div>
+          <div><dt>Location</dt><dd>{esc(contact.get("postalCode", ""))}<br>{esc(contact.get("address", ""))}<br><a href="{esc(contact.get("mapsUrl", ""))}" target="_blank" rel="noopener noreferrer">Google Mapsで見る ↗</a></dd></div>
+        </dl>
+      </div>
+      <form class="contact-form" data-contact-form data-email-user="{esc(contact.get("emailUser", ""))}" data-email-domain="{esc(contact.get("emailDomain", ""))}">
+        <div class="form-row">
+          <label>お名前<input type="text" name="name" autocomplete="name" required></label>
+          <label>メールアドレス<input type="email" name="email" autocomplete="email" required></label>
+        </div>
+        <label>件名<input type="text" name="subject" required></label>
+        <label>メッセージ<textarea name="message" rows="7" required></textarea></label>
+        <div class="contact-form-actions"><button type="submit">メールを作成 →</button><p>送信ボタンを押すと、端末のメールアプリが開きます。</p></div>
+      </form>
+    </div>
+  </section>
 </main>
 <footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer>
 </body></html>'''
@@ -606,7 +769,7 @@ def build_home(data: dict) -> str:
 def build_content_detail(data: dict, item: dict) -> str:
     site = data["site"]
     p = data["profile"]
-    image = local_url(item["image"], "../")
+    image = local_url(item.get("detailImage") or item["image"], "../")
     fallback_class = " detail-thumb--fallback" if item.get("_imageFallback") else ""
     tags = ''.join(f'<span>{esc(tag)}</span>' for tag in item.get("tags", []))
     date_html = f'<time datetime="{esc(item["date"])}">{esc(item["date"].replace("-", "."))}</time>' if item.get("date") else ''
@@ -633,7 +796,7 @@ def build_content_detail(data: dict, item: dict) -> str:
       <div class="article-meta-row">{render_category_badge(item)}{date_html}</div>
       <h1>{esc(item["title"])}</h1>
       <p class="article-lead">{esc(item.get("summary", ""))}</p>
-      <div class="article-hero-image{fallback_class}"><img src="{esc(image)}" alt="{esc(item["imageAlt"])}"></div>
+      <div class="article-hero-image{fallback_class}"><img src="{esc(image)}" alt="{esc(item["imageAlt"])}" decoding="async"></div>
       <div class="article-tags">{tags}</div>
       <div class="article-body">{body}</div>
       <div class="article-back"><a href="../research/index.html">← Research一覧へ戻る</a></div>
@@ -761,7 +924,11 @@ def main() -> None:
     if (ROOT / "assets").exists():
         shutil.copytree(ROOT / "assets", DIST / "assets")
 
-    (DIST / "index.html").write_text(build_home(data), encoding="utf-8")
+    prepare_profile_image(data)
+    content_items = load_content_items(data)
+    prepare_content_images(content_items)
+
+    (DIST / "index.html").write_text(build_home(data, content_items), encoding="utf-8")
 
     (DIST / "teaching.html").write_text(build_teaching_page(data), encoding="utf-8")
 
@@ -770,7 +937,6 @@ def main() -> None:
         works_text = update_works_header(works.read_text(encoding="utf-8"), data["profile"])
         (DIST / "works.html").write_text(works_text, encoding="utf-8")
 
-    content_items = load_content_items(data)
     rdir = DIST / "research"
     rdir.mkdir(exist_ok=True)
     (rdir / "index.html").write_text(build_research_index(data, content_items), encoding="utf-8")
