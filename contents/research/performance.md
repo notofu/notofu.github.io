@@ -1,7 +1,7 @@
 ---
 title: 演奏データに基づく演奏者の個人性分析
 summary: 発音時刻、音量、アーティキュレーションなどから、演奏者ごとの表現傾向と識別可能性を分析します。
-image:
+image:assets/research-preparing-02.png
 imageAlt: 演奏者の個人性分析の研究サムネイル
 date: 2026-08-07
 tags: 演奏データ, 機械学習, 個人性
