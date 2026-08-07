@@ -921,6 +921,12 @@ def main() -> None:
         src = ROOT / name
         if src.exists():
             shutil.copy2(src, DIST / name)
+    # Google Search Console verification file
+    for verification_file in ROOT.glob("google*.html"):
+        shutil.copy2(
+            verification_file,
+            DIST / verification_file.name
+        )
     if (ROOT / "assets").exists():
         shutil.copytree(ROOT / "assets", DIST / "assets")
 
