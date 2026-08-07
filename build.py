@@ -79,21 +79,58 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
         ("teaching", f"{prefix}index.html#teaching", "Teaching"),
         ("profile", f"{prefix}index.html#profile", "Profile"),
     ]
+
     nav = "".join(
         f'<a href="{u}" class="{"is-active" if key == active else ""}">{label}</a>'
         for key, u, label in links
     )
-    mobile = "".join(f'<a href="{u}">{label}</a>' for _, u, label in links)
-    return f'''<header class="site-header" id="top">
+
+    mobile = "".join(
+        f'<a href="{u}">{label}</a>'
+        for _, u, label in links
+    )
+
+    return f'''
+<header class="site-header" id="top">
   <div class="container header-inner">
+
     <a class="brand" href="{prefix}index.html" aria-label="noto Lab ホーム">
-      <img class="brand-logo" src="{prefix}assets/noto-lab-wordmark.png" alt="noto Lab" width="141" height="30">
+      <img
+        class="brand-logo"
+        src="{prefix}assets/noto-lab-wordmark.png"
+        alt="noto Lab"
+      >
     </a>
-    <nav class="desktop-nav" aria-label="主要メニュー">{nav}</nav>
-    <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
+
+    <nav class="desktop-nav" aria-label="主要メニュー">
+      {nav}
+    </nav>
+
+    <button
+      class="menu-button"
+      type="button"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+      aria-label="メニューを開く"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
   </div>
-  <nav class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="モバイルメニュー">{mobile}</nav>
-</header>'''
+
+  <nav
+    class="mobile-nav"
+    id="mobile-nav"
+    data-mobile-nav
+    aria-label="モバイルメニュー"
+  >
+    {mobile}
+  </nav>
+</header>
+'''
 
 def render_news(news: dict) -> str:
     rows = []
