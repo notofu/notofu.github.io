@@ -6,14 +6,12 @@
   menuButton?.addEventListener('click', () => {
     const isOpen = mobileNav?.classList.toggle('is-open') ?? false;
     menuButton.setAttribute('aria-expanded', String(isOpen));
-    menuButton.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
   });
 
   mobileNav?.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
       mobileNav.classList.remove('is-open');
       menuButton?.setAttribute('aria-expanded', 'false');
-      menuButton?.setAttribute('aria-label', 'メニューを開く');
     });
   });
 

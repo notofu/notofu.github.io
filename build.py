@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Build the research profile site from content.json using only Python stdlib."""
-
 from __future__ import annotations
 
 import html
@@ -19,88 +17,65 @@ def esc(value: object) -> str:
     return html.escape(str(value), quote=True)
 
 
-def safe_url(value: str) -> str:
-    parsed = urlparse(value)
-    if parsed.scheme not in {"http", "https"}:
-        raise ValueError(f"Only http/https URLs are allowed: {value}")
-    return value
+def is_external(url: str) -> bool:
+    return urlparse(url).scheme in {"http", "https"}
 
 
-def external_link(url: str, label: str, class_name: str = "") -> str:
+def href(url: str, label: str, class_name: str = "") -> str:
     if not url:
         return ""
-    safe_url(url)
     cls = f' class="{esc(class_name)}"' if class_name else ""
-    return f'<a{cls} href="{esc(url)}" target="_blank" rel="noopener noreferrer">{label}</a>'
+    extra = ' target="_blank" rel="noopener noreferrer"' if is_external(url) else ""
+    return f'<a{cls} href="{esc(url)}"{extra}>{label}</a>'
 
 
-def render_tags(tags: list[str], class_name: str = "tag-list") -> str:
-    if not tags:
+def render_keyword_line(items: list[str]) -> str:
+    if not items:
         return ""
-    items = "".join(f"<li>{esc(tag)}</li>" for tag in tags)
-    return f'<ul class="{esc(class_name)}">{items}</ul>'
-
-
-def render_history(items: list[dict[str, str]]) -> str:
-    rows = []
-    for item in items:
-        rows.append(
-            '<article class="timeline-item">'
-            f'<div class="timeline-period">{esc(item["period"])}</div>'
-            '<div class="timeline-body">'
-            f'<h3>{esc(item["title"])}</h3>'
-            f'<p>{esc(item["detail"])}</p>'
-            '</div></article>'
-        )
-    return "".join(rows)
+    return '<p class="keyword-line">' + ''.join(f'<span>{esc(x)}</span>' for x in items) + '</p>'
 
 
 def render_research(items: list[dict]) -> str:
-    default_images = [
-        ("assets/research-melody.png", "旋律の音高推移と構造区間を表した抽象図"),
-        ("assets/research-performance.png", "演奏データと個人差を表した抽象図"),
-        ("assets/research-gaze.png", "楽譜と鍵盤への視線移動を表した抽象図"),
-        ("assets/research-ensemble.png", "複数演奏者の同期と位相関係を表した抽象図"),
-    ]
-    cards = []
-    for index, item in enumerate(items, 1):
-        default_image, default_alt = default_images[(index - 1) % len(default_images)]
-        image = item.get("image") or default_image
-        image_alt = item.get("imageAlt") or default_alt
+    rows = []
+    for i, item in enumerate(items, 1):
+        image = item.get("image", "").strip()
         image_html = ""
+        item_cls = "research-item"
         if image:
-            image_html = (
-                '<div class="research-image">'
-                f'<img src="{esc(image)}" alt="{esc(image_alt)}" width="720" height="420" loading="lazy">'
-                '</div>'
-            )
-        cards.append(
-            '<article class="research-card">'
-            f'{image_html}'
-            '<div class="research-card-body">'
-            f'<div class="research-index">0{index}</div>'
+            alt = item.get("imageAlt") or f'{item["title"]}の研究イメージ'
+            image_html = f'<img class="research-image" src="{esc(image)}" alt="{esc(alt)}" width="440" height="264" loading="lazy">'
+            item_cls += " has-image"
+        tags = item.get("tags", [])
+        tag_html = ""
+        if tags:
+            tag_html = '<ul class="research-tags">' + ''.join(f'<li>{esc(t)}</li>' for t in tags) + '</ul>'
+        rows.append(
+            f'<article class="{item_cls}">'
+            f'<div class="research-index">{i:02d}</div>'
+            '<div class="research-body">'
             f'<h3>{esc(item["title"])}</h3>'
             f'<p>{esc(item["description"])}</p>'
-            f'{render_tags(item.get("tags", []))}'
-            '</div></article>'
+            f'{tag_html}'
+            '</div>'
+            f'{image_html}'
+            '</article>'
         )
-    return "".join(cards)
+    return ''.join(rows)
 
 
 def render_projects(items: list[dict]) -> str:
     rows = []
     for item in items:
-        link = external_link(item.get("url", ""), "詳細を見る", "text-link")
         rows.append(
-            '<article class="project-row">'
-            f'<div class="project-period">{esc(item["period"])}</div>'
-            '<div class="project-content">'
+            '<article class="plain-row">'
+            f'<div class="plain-meta">{esc(item["period"])}</div>'
+            '<div class="plain-main">'
             f'<h3>{esc(item["title"])}</h3>'
             f'<p>{esc(item["description"])}</p>'
-            f'{link}'
+            f'{href(item.get("url", ""), "詳細を見る ↗", "text-link")}'
             '</div></article>'
         )
-    return "".join(rows)
+    return ''.join(rows)
 
 
 def render_outputs(items: list[dict]) -> str:
@@ -108,152 +83,101 @@ def render_outputs(items: list[dict]) -> str:
     for item in items:
         title = esc(item["title"])
         if item.get("url"):
-            title = external_link(item["url"], title)
-        meta_parts = [part for part in (item.get("venue", ""), item.get("authors", "")) if part]
-        meta = " / ".join(esc(part) for part in meta_parts)
+            title = href(item["url"], title)
+        meta = " / ".join(esc(x) for x in [item.get("venue", ""), item.get("authors", "")] if x)
         rows.append(
             '<article class="output-row">'
-            '<div class="output-meta">'
-            f'<span class="output-year">{esc(item["year"])}</span>'
-            f'<span class="output-type">{esc(item["type"])}</span>'
-            '</div>'
+            f'<div class="output-year">{esc(item["year"])}</div>'
+            f'<div class="output-type">{esc(item["type"])}</div>'
             '<div class="output-content">'
             f'<h3>{title}</h3>'
             f'<p>{meta}</p>'
             '</div></article>'
         )
-    return "".join(rows)
+    return ''.join(rows)
 
 
 def render_teaching(items: list[dict]) -> str:
-    cards = []
-    for item in items:
-        cards.append(
-            '<article class="teaching-card">'
-            f'<h3>{esc(item["title"])}</h3>'
-            f'<p>{esc(item["description"])}</p>'
-            '</article>'
-        )
-    return "".join(cards)
+    return ''.join(
+        '<article class="teaching-item">'
+        f'<h3>{esc(item["title"])}</h3>'
+        f'<p>{esc(item["description"])}</p>'
+        '</article>'
+        for item in items
+    )
+
+
+def render_history(items: list[dict]) -> str:
+    return ''.join(
+        '<article class="timeline-item">'
+        f'<div class="timeline-period">{esc(item["period"])}</div>'
+        '<div class="timeline-body">'
+        f'<h3>{esc(item["title"])}</h3>'
+        f'<p>{esc(item["detail"])}</p>'
+        '</div></article>'
+        for item in items
+    )
 
 
 def render_links(items: list[dict]) -> str:
-    cards = []
+    rows = []
     for item in items:
-        url = safe_url(item["url"])
-        cards.append(
-            f'<a class="link-card" href="{esc(url)}" target="_blank" rel="noopener noreferrer">'
-            '<span class="link-card-copy">'
+        extra = ' target="_blank" rel="noopener noreferrer"' if is_external(item["url"]) else ""
+        rows.append(
+            f'<a class="link-row" href="{esc(item["url"])}"{extra}>'
+            '<span class="link-copy">'
             f'<strong>{esc(item["label"])}</strong>'
             f'<small>{esc(item["description"])}</small>'
-            '</span>'
-            '<span class="link-arrow" aria-hidden="true">↗</span>'
-            '</a>'
+            '</span><span class="link-arrow" aria-hidden="true">↗</span></a>'
         )
-    return "".join(cards)
+    return ''.join(rows)
 
 
 def build_json_ld(data: dict) -> str:
     site = data["site"]
-    profile = data["profile"]
-    same_as = [item["url"] for item in data["links"]["items"] if item.get("sameAs", False)]
-    image_url = urljoin(site["url"], profile["image"]) if profile.get("image") else ""
-
-    person_id = urljoin(site["url"], "#person")
-    page_id = urljoin(site["url"], "#profile-page")
-    website_id = urljoin(site["url"], "#website")
-
+    p = data["profile"]
+    same_as = [x["url"] for x in data["links"]["items"] if x.get("sameAs")]
     person = {
         "@type": "Person",
-        "@id": person_id,
-        "name": profile["nameJa"],
-        "alternateName": profile["nameEn"],
+        "@id": urljoin(site["url"], "#person"),
+        "name": p["nameJa"],
+        "alternateName": p["nameEn"],
         "url": site["url"],
-        "description": profile["summary"],
-        "jobTitle": profile["position"],
-        "affiliation": {
-            "@type": "CollegeOrUniversity",
-            "name": profile["affiliationEn"],
-            "url": "https://www.hakodate-ct.ac.jp/",
-        },
-        "alumniOf": {
-            "@type": "CollegeOrUniversity",
-            "name": "Future University Hakodate",
-            "url": "https://www.fun.ac.jp/",
-        },
-        "knowsAbout": profile["keywords"],
+        "description": p["summary"],
+        "jobTitle": p["position"],
+        "affiliation": {"@type": "CollegeOrUniversity", "name": p["affiliationEn"], "url": "https://www.hakodate-ct.ac.jp/"},
+        "alumniOf": {"@type": "CollegeOrUniversity", "name": "Future University Hakodate", "url": "https://www.fun.ac.jp/"},
+        "knowsAbout": p["keywords"],
         "sameAs": same_as,
     }
-    if image_url:
-        person["image"] = image_url
-
+    if p.get("image"):
+        person["image"] = urljoin(site["url"], p["image"])
     graph = {
         "@context": "https://schema.org",
         "@graph": [
-            {
-                "@type": "WebSite",
-                "@id": website_id,
-                "url": site["url"],
-                "name": f'{profile["nameJa"]} / {profile["nameEn"]}',
-                "inLanguage": site["language"],
-                "publisher": {"@id": person_id},
-            },
-            {
-                "@type": "ProfilePage",
-                "@id": page_id,
-                "url": site["url"],
-                "name": site["title"],
-                "description": site["description"],
-                "inLanguage": site["language"],
-                "isPartOf": {"@id": website_id},
-                "mainEntity": {"@id": person_id},
-                "dateModified": date.today().isoformat(),
-            },
+            {"@type": "WebSite", "@id": urljoin(site["url"], "#website"), "url": site["url"], "name": f'{p["nameJa"]} / {p["nameEn"]}', "inLanguage": site["language"], "publisher": {"@id": person["@id"]}},
+            {"@type": "ProfilePage", "@id": urljoin(site["url"], "#profile-page"), "url": site["url"], "name": site["title"], "description": site["description"], "inLanguage": site["language"], "mainEntity": {"@id": person["@id"]}, "dateModified": date.today().isoformat()},
             person,
-        ],
+        ]
     }
     return json.dumps(graph, ensure_ascii=False, indent=2).replace("</", "<\\/")
 
 
 def build_html(data: dict) -> str:
-    site = data["site"]
-    profile = data["profile"]
-    about = data["about"]
-    research = data["research"]
-    projects = data["projects"]
-    outputs = data["outputs"]
-    teaching = data["teaching"]
-    links = data["links"]
-
-    site_url = safe_url(site["url"])
+    site, p = data["site"], data["profile"]
+    about, research = data["about"], data["research"]
+    projects, outputs = data["projects"], data["outputs"]
+    teaching, links = data["teaching"], data["links"]
+    site_url = site["url"]
     og_url = urljoin(site_url, site["ogImage"])
-    profile_image = profile.get("image", "")
-    profile_image_html = ""
-    if profile_image:
-        profile_image_html = (
-            '<div class="profile-photo-wrap">'
-            f'<img class="profile-photo" src="{esc(profile_image)}" '
-            f'alt="{esc(profile["imageAlt"])}" width="76" height="76" fetchpriority="high">'
-            '</div>'
-        )
-
-    facts = [
-        ("所属", profile["affiliation"]),
-        ("職位", profile["position"]),
-        ("学位", profile["degree"]),
-        ("拠点", profile["location"]),
-    ]
-    fact_html = "".join(
-        f'<div class="fact-row"><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>'
-        for label, value in facts
-    )
-    about_html = "".join(f"<p>{esc(p)}</p>" for p in about["paragraphs"])
-    json_ld = build_json_ld(data)
+    profile_image = ""
+    if p.get("image"):
+        profile_image = f'<img class="profile-photo" src="{esc(p["image"])}" alt="{esc(p["imageAlt"])}" width="72" height="72" fetchpriority="high">'
+    facts = [("所属", p["affiliation"]), ("職位", p["position"]), ("学位", p["degree"]), ("拠点", p["location"])]
+    facts_html = ''.join(f'<div class="fact-row"><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>' for k, v in facts)
+    about_html = ''.join(f'<p>{esc(x)}</p>' for x in about["paragraphs"])
     verification = site.get("googleSiteVerification", "").strip()
-    verification_meta = (
-        f'<meta name="google-site-verification" content="{esc(verification)}">'
-        if verification else ""
-    )
+    verify_meta = f'<meta name="google-site-verification" content="{esc(verification)}">' if verification else ""
 
     return f'''<!doctype html>
 <html lang="{esc(site["language"])}">
@@ -262,225 +186,135 @@ def build_html(data: dict) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{esc(site["title"])}</title>
   <meta name="description" content="{esc(site["description"])}">
-  <meta name="author" content="{esc(profile["nameJa"])}">
+  <meta name="author" content="{esc(p["nameJa"])}">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <meta name="theme-color" content="{esc(site["themeColor"])}">
-  {verification_meta}
+  {verify_meta}
   <link rel="canonical" href="{esc(site_url)}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="sitemap" type="application/xml" href="{esc(urljoin(site_url, 'sitemap.xml'))}">
-
   <meta property="og:type" content="profile">
   <meta property="og:locale" content="ja_JP">
-  <meta property="og:site_name" content="{esc(profile["nameJa"])} / {esc(profile["nameEn"])}">
   <meta property="og:title" content="{esc(site["title"])}">
   <meta property="og:description" content="{esc(site["description"])}">
   <meta property="og:url" content="{esc(site_url)}">
   <meta property="og:image" content="{esc(og_url)}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="{esc(profile["nameJa"])}の研究者個人サイト">
-
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{esc(site["title"])}">
-  <meta name="twitter:description" content="{esc(site["description"])}">
-  <meta name="twitter:image" content="{esc(og_url)}">
-
-  <script type="application/ld+json">
-{json_ld}
-  </script>
+  <script type="application/ld+json">{build_json_ld(data)}</script>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">本文へ移動</a>
-
-  <header class="site-header" id="top">
-    <div class="container header-inner">
-      <a class="brand" href="#top" aria-label="ページ上部へ戻る">
-        <span>{esc(profile["nameJa"])}</span>
-        <small>{esc(profile["nameEn"])}</small>
-      </a>
-      <nav class="desktop-nav" aria-label="主要メニュー">
-        <a href="#about">研究概要</a>
-        <a href="#research">研究テーマ</a>
-        <a href="#outputs">主要業績</a>
-        <a href="#teaching">教育</a>
-        <a href="#profile">略歴</a>
-      </nav>
-      <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-    <nav class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="モバイルメニュー">
-      <a href="#about">研究概要</a>
-      <a href="#research">研究テーマ</a>
-      <a href="#outputs">主要業績</a>
-      <a href="#teaching">教育</a>
-      <a href="#profile">略歴</a>
-      <a href="#links">外部リンク</a>
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-header" id="top">
+  <div class="container header-inner">
+    <a class="brand" href="#top">{esc(p["nameJa"])} <small>{esc(p["nameEn"])}</small></a>
+    <nav class="desktop-nav" aria-label="主要メニュー">
+      <a href="#research">Research</a>
+      <a href="#outputs">Publications</a>
+      <a href="#teaching">Teaching</a>
+      <a href="#profile">Profile</a>
+      <a href="#links">Links</a>
     </nav>
-  </header>
+    <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="モバイルメニュー">
+    <a href="#research">Research</a><a href="#outputs">Publications</a><a href="#teaching">Teaching</a><a href="#profile">Profile</a><a href="#links">Links</a>
+  </nav>
+</header>
 
-  <main id="main">
-    <section class="hero" aria-labelledby="page-title">
-      <div class="container hero-shell">
-        <div class="identity-row">
-          {profile_image_html}
-          <div class="identity-copy">
-            <p class="identity-name"><strong>{esc(profile["nameJa"])}</strong><span lang="en">{esc(profile["nameEn"])}</span></p>
-            <p class="identity-affiliation">{esc(profile["affiliation"])}<br><span>{esc(profile["position"])}・{esc(profile["degree"])}</span></p>
-          </div>
-        </div>
-
-        <div class="hero-main">
-          <div class="hero-copy">
-            <p class="eyebrow">RESEARCHER PROFILE</p>
-            <h1 id="page-title">研究・教育活動</h1>
-            <p class="hero-summary">{esc(profile["summary"])}</p>
-            {render_tags(profile["keywords"], "keyword-list")}
-            <div class="hero-actions">
-              <a class="primary-button" href="#research">研究テーマを見る</a>
-              {external_link(outputs["allWorksUrl"], '業績一覧を見る', 'secondary-button')}
-            </div>
-          </div>
-
-          <nav class="hero-shortcuts" aria-label="主要コンテンツへのリンク">
-            <a href="#research"><span>RESEARCH</span><strong>研究テーマ</strong><small>{len(research["areas"])}件の研究領域</small></a>
-            <a href="#outputs"><span>OUTPUTS</span><strong>主要業績</strong><small>論文・国際会議発表</small></a>
-            <a href="#profile"><span>PROFILE</span><strong>略歴</strong><small>所属・学位・経歴</small></a>
-          </nav>
+<main id="main">
+  <section class="hero">
+    <div class="container">
+      <div class="profile-intro">
+        {profile_image}
+        <div class="profile-copy">
+          <h1>{esc(p["nameJa"])}</h1>
+          <p class="profile-name-en">{esc(p["nameEn"])}</p>
+          <p class="profile-role">{esc(p["position"])} / {esc(p["affiliation"])}</p>
         </div>
       </div>
-    </section>
-
-    <section class="section section-soft" id="about" aria-labelledby="about-title">
-      <div class="container split-layout">
-        <div class="section-heading sticky-heading">
-          <p class="section-label">ABOUT</p>
-          <h2 id="about-title">{esc(about["heading"])}</h2>
-        </div>
-        <div class="prose">{about_html}</div>
+      <p class="hero-summary">{esc(p["summary"])}</p>
+      {render_keyword_line(p["keywords"])}
+      <div class="hero-links">
+        <a href="#research">研究テーマ ↓</a>
+        {href(outputs["allWorksUrl"], "研究業績 ↗")}
+        {href(next((x["url"] for x in links["items"] if x["label"].lower() == "researchmap"), ""), "Researchmap ↗")}
       </div>
-    </section>
-
-    <section class="section" id="research" aria-labelledby="research-title">
-      <div class="container">
-        <div class="section-heading section-heading-wide">
-          <div>
-            <p class="section-label">RESEARCH</p>
-            <h2 id="research-title">{esc(research["heading"])}</h2>
-          </div>
-          <p class="section-intro">{esc(research["intro"])}</p>
-        </div>
-        <div class="research-grid">{render_research(research["areas"])}</div>
-      </div>
-    </section>
-
-    <section class="section section-soft" id="projects" aria-labelledby="projects-title">
-      <div class="container split-layout">
-        <div class="section-heading sticky-heading">
-          <p class="section-label">PROJECTS</p>
-          <h2 id="projects-title">{esc(projects["heading"])}</h2>
-        </div>
-        <div class="project-list">{render_projects(projects["items"])}</div>
-      </div>
-    </section>
-
-    <section class="section" id="outputs" aria-labelledby="outputs-title">
-      <div class="container">
-        <div class="section-heading section-heading-wide">
-          <div>
-            <p class="section-label">SELECTED WORKS</p>
-            <h2 id="outputs-title">{esc(outputs["heading"])}</h2>
-          </div>
-          <div>
-            <p class="section-intro">{esc(outputs["intro"])}</p>
-            {external_link(outputs["allWorksUrl"], 'すべての業績を見る', 'text-link')}
-          </div>
-        </div>
-        <div class="output-list">{render_outputs(outputs["items"])}</div>
-      </div>
-    </section>
-
-    <section class="section section-soft" id="teaching" aria-labelledby="teaching-title">
-      <div class="container">
-        <div class="section-heading">
-          <p class="section-label">TEACHING</p>
-          <h2 id="teaching-title">{esc(teaching["heading"])}</h2>
-        </div>
-        <div class="teaching-grid">{render_teaching(teaching["items"])}</div>
-      </div>
-    </section>
-
-    <section class="section" id="profile" aria-labelledby="profile-title">
-      <div class="container split-layout">
-        <div class="section-heading sticky-heading">
-          <p class="section-label">PROFILE</p>
-          <h2 id="profile-title">略歴</h2>
-        </div>
-        <div class="timeline">{render_history(profile["history"])}</div>
-      </div>
-    </section>
-
-    <section class="section section-contact" id="links" aria-labelledby="links-title">
-      <div class="container link-section-layout">
-        <div class="section-heading">
-          <p class="section-label">LINKS</p>
-          <h2 id="links-title">{esc(links["heading"])}</h2>
-          <p class="section-intro">{esc(links["text"])}</p>
-        </div>
-        <div class="link-grid">{render_links(links["items"])}</div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>© <span data-current-year></span> {esc(profile["nameEn"])}</p>
-      <a href="#top">ページ上部へ戻る</a>
     </div>
-  </footer>
-</body>
-</html>
-'''
+  </section>
+
+  <section class="section" id="about" aria-labelledby="about-title">
+    <div class="container">
+      <div class="section-heading"><div><h2 id="about-title">{esc(about["heading"])}</h2><p class="section-label">ABOUT</p></div><p class="section-intro">音楽演奏における知覚・予測・学習・相互作用を、データ分析と計算モデルから検討しています。</p></div>
+      <div class="prose">{about_html}</div>
+    </div>
+  </section>
+
+  <section class="section" id="research" aria-labelledby="research-title">
+    <div class="container">
+      <div class="section-heading"><div><h2 id="research-title">{esc(research["heading"])}</h2><p class="section-label">RESEARCH</p></div><p class="section-intro">{esc(research["intro"])}</p></div>
+      <div class="research-list">{render_research(research["areas"])}</div>
+    </div>
+  </section>
+
+  <section class="section" id="projects" aria-labelledby="projects-title">
+    <div class="container">
+      <div class="section-heading"><div><h2 id="projects-title">{esc(projects["heading"])}</h2><p class="section-label">PROJECTS</p></div><p class="section-intro">現在進行中・継続中の研究プロジェクトです。</p></div>
+      <div class="plain-list">{render_projects(projects["items"])}</div>
+    </div>
+  </section>
+
+  <section class="section" id="outputs" aria-labelledby="outputs-title">
+    <div class="container">
+      <div class="section-heading"><div><h2 id="outputs-title">{esc(outputs["heading"])}</h2><p class="section-label">SELECTED PUBLICATIONS</p></div><p class="section-intro">{esc(outputs["intro"])}</p></div>
+      <div class="output-list">{render_outputs(outputs["items"])}</div>
+      <p class="section-more">{href(outputs["allWorksUrl"], "すべての研究業績を見る →")}</p>
+    </div>
+  </section>
+
+  <section class="section" id="teaching" aria-labelledby="teaching-title">
+    <div class="container">
+      <div class="section-heading"><div><h2 id="teaching-title">{esc(teaching["heading"])}</h2><p class="section-label">TEACHING</p></div><p class="section-intro">担当する主な科目・教育内容です。</p></div>
+      <div class="teaching-list">{render_teaching(teaching["items"])}</div>
+    </div>
+  </section>
+
+  <section class="section" id="profile" aria-labelledby="profile-title">
+    <div class="container">
+      <div class="section-heading"><div><h2 id="profile-title">プロフィール</h2><p class="section-label">PROFILE</p></div><p class="section-intro">所属・学位・略歴。</p></div>
+      <div class="profile-layout"><dl class="fact-list">{facts_html}</dl><div class="timeline">{render_history(p["history"])}</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="links" aria-labelledby="links-title">
+    <div class="container">
+      <div class="section-heading"><div><h2 id="links-title">{esc(links["heading"])}</h2><p class="section-label">LINKS</p></div><p class="section-intro">{esc(links["text"])}</p></div>
+      <div class="link-list">{render_links(links["items"])}</div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer>
+</body></html>'''
 
 
 def build_404(data: dict) -> str:
-    site = data["site"]
-    return f'''<!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>ページが見つかりません</title><link rel="stylesheet" href="styles.css"></head>
-<body><main class="error-page"><div><p class="section-label">404</p><h1>ページが見つかりません</h1><p>URLをご確認ください。</p><a class="primary-button" href="{esc(site["url"])}">トップページへ戻る</a></div></main></body></html>'''
+    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>ページが見つかりません</title><link rel="stylesheet" href="styles.css"></head><body><main class="error-page"><div><p class="section-label">404</p><h1>ページが見つかりません</h1><p>URLをご確認ください。</p><a href="{esc(data["site"]["url"])}">トップページへ戻る →</a></div></main></body></html>'''
 
 
 def main() -> None:
     data = json.loads(CONTENT_PATH.read_text(encoding="utf-8"))
-
     if DIST.exists():
         shutil.rmtree(DIST)
     DIST.mkdir(parents=True)
-
     (DIST / "index.html").write_text(build_html(data), encoding="utf-8")
     (DIST / "404.html").write_text(build_404(data), encoding="utf-8")
-    shutil.copy2(ROOT / "styles.css", DIST / "styles.css")
-    shutil.copy2(ROOT / "script.js", DIST / "script.js")
-    shutil.copy2(ROOT / "works.html", DIST / "works.html")
-    shutil.copy2(ROOT / ".nojekyll", DIST / ".nojekyll")
+    for name in ("styles.css", "script.js", "works.html", ".nojekyll"):
+        shutil.copy2(ROOT / name, DIST / name)
     shutil.copytree(ROOT / "assets", DIST / "assets")
-
-    site_url = safe_url(data["site"]["url"])
-    sitemap = (
-        '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        f'  <url><loc>{esc(site_url)}</loc><lastmod>{date.today().isoformat()}</lastmod></url>\n'
-        f'  <url><loc>{esc(urljoin(site_url, "works.html"))}</loc><lastmod>{date.today().isoformat()}</lastmod></url>\n'
-        '</urlset>\n'
-    )
+    site_url = data["site"]["url"]
+    sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + f'  <url><loc>{esc(site_url)}</loc><lastmod>{date.today().isoformat()}</lastmod></url>\n' + f'  <url><loc>{esc(urljoin(site_url, "works.html"))}</loc><lastmod>{date.today().isoformat()}</lastmod></url>\n</urlset>\n'
     (DIST / "sitemap.xml").write_text(sitemap, encoding="utf-8")
-    robots = f"User-agent: *\nAllow: /\nSitemap: {urljoin(site_url, 'sitemap.xml')}\n"
-    (DIST / "robots.txt").write_text(robots, encoding="utf-8")
-
+    (DIST / "robots.txt").write_text(f'User-agent: *\nAllow: /\nSitemap: {urljoin(site_url, "sitemap.xml")}\n', encoding="utf-8")
     print(f"Built site at: {DIST}")
 
 
