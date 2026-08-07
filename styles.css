@@ -682,3 +682,102 @@ body { font-size: 18px; }
   .research-thumb,
   .research-thumb-link { transition: none; }
 }
+
+/* =========================================================
+   Teaching page — Researchmap-powered course list
+   ========================================================= */
+.teaching-hero .eyebrow { margin-bottom: 8px; }
+.teaching-source-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  margin-top: 20px;
+  font-size: .8rem;
+}
+.teaching-live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.teaching-live-status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+}
+.teaching-source-row a {
+  color: var(--teal-dark);
+  text-decoration: none;
+  font-weight: 700;
+}
+.teaching-source-row a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.teaching-page-section { padding: 54px 0 76px; }
+.teaching-page-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 64px;
+  align-items: start;
+}
+.teaching-page-aside {
+  position: sticky;
+  top: 102px;
+}
+.teaching-page-aside h2 {
+  margin: 2px 0 8px;
+  color: var(--navy);
+  font-size: 1.35rem;
+}
+.teaching-page-aside > p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.7;
+}
+.teaching-course-list { border-top: 1px solid var(--line); }
+.teaching-course {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 28px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.teaching-course-period {
+  padding-top: 3px;
+  color: var(--teal);
+  font-size: .78rem;
+  line-height: 1.55;
+  font-weight: 750;
+  letter-spacing: .01em;
+}
+.teaching-course-main h2 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 1.04rem;
+  line-height: 1.5;
+}
+.teaching-course-institution {
+  margin: 4px 0 0;
+  color: #40536a;
+  font-size: .82rem;
+  font-weight: 650;
+}
+.teaching-course-description {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.7;
+}
+.teaching-course--fallback .teaching-course-period { color: #8a949d; }
+
+@media (max-width: 760px) {
+  .teaching-page-section { padding: 38px 0 56px; }
+  .teaching-page-grid { grid-template-columns: 1fr; gap: 24px; }
+  .teaching-page-aside { position: static; }
+  .teaching-page-aside > p:last-child { max-width: 560px; }
+  .teaching-course { grid-template-columns: 1fr; gap: 5px; padding: 18px 0; }
+  .teaching-course-period { padding-top: 0; font-size: .74rem; }
+  .teaching-course-main h2 { font-size: 1rem; }
+}

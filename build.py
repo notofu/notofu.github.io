@@ -76,61 +76,24 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
         ("home", f"{prefix}index.html", "Home"),
         ("research", f"{prefix}index.html#research", "Research"),
         ("publications", f"{prefix}works.html", "Publications"),
-        ("teaching", f"{prefix}index.html#teaching", "Teaching"),
+        ("teaching", f"{prefix}teaching.html", "Teaching"),
         ("profile", f"{prefix}index.html#profile", "Profile"),
     ]
-
     nav = "".join(
         f'<a href="{u}" class="{"is-active" if key == active else ""}">{label}</a>'
         for key, u, label in links
     )
-
-    mobile = "".join(
-        f'<a href="{u}">{label}</a>'
-        for _, u, label in links
-    )
-
-    return f'''
-<header class="site-header" id="top">
+    mobile = "".join(f'<a href="{u}">{label}</a>' for _, u, label in links)
+    return f'''<header class="site-header" id="top">
   <div class="container header-inner">
-
     <a class="brand" href="{prefix}index.html" aria-label="noto Lab ホーム">
-      <img
-        class="brand-logo"
-        src="{prefix}assets/noto-lab-wordmark.png"
-        alt="noto Lab"
-      >
+      <img class="brand-logo" src="{prefix}assets/noto-lab-wordmark.png" alt="noto Lab" width="141" height="30">
     </a>
-
-    <nav class="desktop-nav" aria-label="主要メニュー">
-      {nav}
-    </nav>
-
-    <button
-      class="menu-button"
-      type="button"
-      data-menu-toggle
-      aria-expanded="false"
-      aria-controls="mobile-nav"
-      aria-label="メニューを開く"
-    >
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-
+    <nav class="desktop-nav" aria-label="主要メニュー">{nav}</nav>
+    <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
   </div>
-
-  <nav
-    class="mobile-nav"
-    id="mobile-nav"
-    data-mobile-nav
-    aria-label="モバイルメニュー"
-  >
-    {mobile}
-  </nav>
-</header>
-'''
+  <nav class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="モバイルメニュー">{mobile}</nav>
+</header>'''
 
 def render_news(news: dict) -> str:
     rows = []
@@ -306,7 +269,7 @@ def build_home(data: dict) -> str:
     <div class="container hero-grid">
       <div class="overview-lead">
         <p class="eyebrow">Music Information Processing / HCI</p>
-        <h1>能登 楓 のWebページ</h1>
+        <h1>能登 楓のWebページ</h1>
         <p class="overview-summary">{esc(shorten(p["summary"], 90))}</p>
         <div class="overview-actions">
           <a class="text-link" href="#research">研究テーマを見る ↓</a>
@@ -345,7 +308,7 @@ def build_home(data: dict) -> str:
         <div class="publication-list">{render_selected_publications(outputs.get("items", []))}</div>
       </section>
       <section class="overview-block" id="teaching">
-        <div class="section-mini-head"><h2>Teaching</h2></div>
+        <div class="section-mini-head"><h2>Teaching</h2><a href="teaching.html">すべて見る →</a></div>
         <div class="teaching-list">{render_teaching(teaching.get("items", []))}</div>
       </section>
     </div>
@@ -408,6 +371,78 @@ def build_research_index(data: dict) -> str:
     return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>研究テーマ | {esc(p["nameJa"])}</title><meta name="description" content="{esc(research.get("intro", "研究テーマ一覧"))}"><link rel="icon" href="../assets/noto-lab-icon.png" type="image/png"><link rel="stylesheet" href="../styles.css"><script src="../script.js" defer></script></head><body>{header(p, prefix="../", active="research")}<main><section class="works-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><h1>Research Themes</h1><p>{esc(research.get("intro", ""))}</p></div></section><section class="research-overview"><div class="container"><div class="research-grid research-grid--all">{render_research(research.get("areas", []), prefix="../")}</div></div></section></main><footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
 
 
+
+def render_teaching_fallback(items: list[dict]) -> str:
+    """Static fallback shown until the public researchmap API finishes loading."""
+    rows = []
+    for item in items:
+        rows.append(
+            '<article class="teaching-course teaching-course--fallback">'
+            '<div class="teaching-course-period">掲載中</div>'
+            '<div class="teaching-course-main">'
+            f'<h2>{esc(item.get("title", ""))}</h2>'
+            f'<p class="teaching-course-description">{esc(item.get("description", ""))}</p>'
+            '</div></article>'
+        )
+    return "".join(rows)
+
+
+def build_teaching_page(data: dict) -> str:
+    site = data["site"]
+    p = data["profile"]
+    teaching = data.get("teaching", {})
+    fallback = render_teaching_fallback(teaching.get("items", []))
+    canonical = urljoin(site["url"], "teaching.html")
+    rmap_url = "https://researchmap.jp/notokaede/teaching_experience"
+
+    return f'''<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teaching | {esc(p["nameJa"])} / {esc(p["nameEn"])}</title>
+  <meta name="description" content="{esc(p["nameJa"])}の担当経験のある科目・教育活動。Researchmapの公開情報をもとに表示しています。">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+  <link rel="canonical" href="{esc(canonical)}">
+  <link rel="icon" href="assets/noto-lab-icon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へ移動</a>
+{header(p, active="teaching")}
+<main id="main">
+  <section class="works-hero teaching-hero">
+    <div class="container">
+      <a class="back-link" href="index.html">← トップページへ戻る</a>
+      <p class="eyebrow">Education</p>
+      <h1>Teaching</h1>
+      <p>担当経験のある科目・教育活動を掲載しています。公開されているResearchmapの情報を自動取得して表示します。</p>
+      <div class="teaching-source-row">
+        <span class="teaching-live-status" data-rmap-status>Researchmapを読み込み中…</span>
+        <a href="{rmap_url}" target="_blank" rel="noopener noreferrer">Researchmapで確認する ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="teaching-page-section">
+    <div class="container teaching-page-grid">
+      <aside class="teaching-page-aside" aria-label="Teachingページの説明">
+        <p class="section-label">COURSES</p>
+        <h2>担当科目</h2>
+        <p>科目名、担当機関、担当期間をResearchmapの公開データから表示します。</p>
+      </aside>
+
+      <div class="teaching-course-list" data-researchmap-teaching data-permalink="notokaede">
+        {fallback}
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="index.html">トップページへ戻る ←</a></div></footer>
+</body>
+</html>'''
+
 def update_works_header(text: str, p: dict) -> str:
     # Replace only the existing header so publication data remains untouched.
     start = text.find('<header class="site-header"')
@@ -432,6 +467,8 @@ def main() -> None:
 
     (DIST / "index.html").write_text(build_home(data), encoding="utf-8")
 
+    (DIST / "teaching.html").write_text(build_teaching_page(data), encoding="utf-8")
+
     works = ROOT / "works.html"
     if works.exists():
         works_text = update_works_header(works.read_text(encoding="utf-8"), data["profile"])
@@ -445,7 +482,7 @@ def main() -> None:
         (rdir / f'{item["slug"]}.html').write_text(build_research_detail(data, raw, i), encoding="utf-8")
 
     site_url = data["site"]["url"].rstrip("/") + "/"
-    urls = [site_url, urljoin(site_url, "works.html"), urljoin(site_url, "research/")]
+    urls = [site_url, urljoin(site_url, "works.html"), urljoin(site_url, "teaching.html"), urljoin(site_url, "research/")]
     for i, raw in enumerate(data["research"].get("areas", [])):
         urls.append(urljoin(site_url, research_item_data(raw, i)["url"]))
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{esc(u)}</loc></url>\n' for u in urls) + '</urlset>\n'
