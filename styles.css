@@ -158,7 +158,7 @@ button { font: inherit; }
 }
 .hero h1 {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3.15rem);
+  font-size: clamp(2rem, 3vw, 2.2rem);
   line-height: 1.2;
   letter-spacing: -0.035em;
   font-weight: 850;
