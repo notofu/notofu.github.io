@@ -1,9 +1,10 @@
 # アップロード手順
 
-GitHub リポジトリ `notofu/notofu.github.io` のルートに、以下の6ファイルをそのまま上書きしてください。
+GitHub の `notofu/notofu.github.io` リポジトリ直下で、以下の7ファイルを上書きしてください。
 
-- `styles.css`
 - `home_module.py`
+- `site_common.py`
+- `styles.css`
 - `content_module.py`
 - `news_module.py`
 - `teaching_module.py`
@@ -13,14 +14,12 @@ GitHub リポジトリ `notofu/notofu.github.io` のルートに、以下の6フ
 
 ## 今回の変更
 
-トップページの `Research Themes / News / Publications` を、薄い背景の上に独立した白いパネルとして縦3枚に分けました。
+1. 全ページのヘッダー／ナビゲーションを Research ページと同じ見た目に統一
+2. ナビゲーションから `Profile` を削除
+3. トップページの `Research Themes` 見出しをクリックすると `research/index.html` へ移動
+4. `News` 見出しをクリックすると `news/index.html` へ移動
+5. `Publications` 見出しをクリックすると `works.html` へ移動
+6. 既存の `View all` はそのまま残す
+7. CSS キャッシュ識別子を `20260808i` に更新
 
-- 各パネルに細いグレーの縁取り
-- 影なし
-- 角丸は控えめ
-- 3パネルの間に18pxの空白
-- 左右は従来より少し内側（最大幅1080px）
-- パネル内部の項目区切り線は薄く残す
-- モバイルでは余白だけ少し縮小
-
-CSSキャッシュ対策として各ページのバージョンを `20260808h` に更新しています。
+アップロード後、GitHub Actions の `Deploy GitHub Pages` が緑になれば反映完了です。

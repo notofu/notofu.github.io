@@ -125,7 +125,7 @@ def build_works_page(data: dict, rm_data: dict[str, list[dict]], permalink: str 
     source_note = 'researchmapの公開情報をGitHub Actionsのビルド時に取得しています。'
     html = f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Works | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links()}
-{og_meta(site, "Works | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808h"><script src="script.js?v=20260808h" defer></script></head><body>
+{og_meta(site, "Works | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808i"><script src="script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="works")}<main id="main">
 <section class="hero works-hero"><div class="container"><a class="back-link" href="index.html">← トップページへ戻る</a><p class="eyebrow">Research Outputs &amp; Activities</p><h1>Works</h1><p>{esc(desc)}</p><p class="works-source-note">{esc(source_note)}</p>
 <nav class="works-local-nav" aria-label="Worksページ内メニュー"><a href="#publications">Publications</a><a href="#presentations">Presentations &amp; MISC</a><a href="#projects">Projects &amp; Grants</a><a href="#ip">Intellectual Property</a><a href="#service">Academic Service</a></nav></div></section>

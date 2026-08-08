@@ -268,7 +268,7 @@ def build_content_detail(data: dict, item: dict, all_works: list[dict]) -> str:
 <title>{esc(title)}</title><meta name="description" content="{esc(description)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <link rel="canonical" href="{esc(canonical)}">{favicon_links("../")}
 {og_meta(site, title, description, canonical, og_image, "article")}
-<link rel="stylesheet" href="../styles.css?v=20260808h"><script src="../script.js?v=20260808h" defer></script></head><body>
+<link rel="stylesheet" href="../styles.css?v=20260808i"><script src="../script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, prefix="../", active="research")}
 <main id="main"><article class="article-page"><div class="container article-container">
 <p class="breadcrumb"><a href="../index.html">Home</a> / <a href="../research/index.html">Research</a> / {esc(item["categoryLabel"])}</p>
@@ -288,7 +288,7 @@ def build_research_index(data: dict, content_items: list[dict]) -> str:
     desc = "研究テーマ、卒業研究、Blogの記事一覧です。"
     return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Research | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links("../")}
-{og_meta(site, "Research | noto Lab", desc, canonical)}<link rel="stylesheet" href="../styles.css?v=20260808h"><script src="../script.js?v=20260808h" defer></script></head><body>
+{og_meta(site, "Research | noto Lab", desc, canonical)}<link rel="stylesheet" href="../styles.css?v=20260808i"><script src="../script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, prefix="../", active="research")}
 <main id="main"><section class="works-hero content-hub-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1>Research</h1><p>研究テーマ、卒業研究、Blogをまとめています。気になる項目から詳細をご覧ください。</p>
 <nav class="content-filter-nav" aria-label="コンテンツカテゴリ"><a href="#research">研究テーマ <span>{len(groups['research'])}</span></a><a href="#graduation">卒業研究 <span>{len(groups['graduation'])}</span></a><a href="#blog">Blog <span>{len(groups['blog'])}</span></a></nav></div></section>

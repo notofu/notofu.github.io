@@ -66,7 +66,6 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
         ("research", f"{prefix}research/index.html", "Research"),
         ("works", f"{prefix}works.html", "Publications"),
         ("teaching", f"{prefix}teaching.html", "Teaching"),
-        ("profile", f"{prefix}index.html#profile", "Profile"),
         ("contact", f"{prefix}contact.html", "Contact"),
     ]
     nav = "".join(

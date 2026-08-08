@@ -188,7 +188,7 @@ def build_home(data: dict, content_items: list[dict], news_items: list[dict], al
 
     return f'''<!doctype html><html lang="{esc(site.get("language", "ja"))}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(site["title"])}</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(site["url"])}">{favicon_links()}
-{og_meta(site, site["title"], desc, site["url"])}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="feed.xml"><link rel="stylesheet" href="styles.css?v=20260808h"><script src="script.js?v=20260808h" defer></script><script type="application/ld+json">{_json_ld(data)}</script></head><body class="home-page">
+{og_meta(site, site["title"], desc, site["url"])}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="feed.xml"><link rel="stylesheet" href="styles.css?v=20260808i"><script src="script.js?v=20260808i" defer></script><script type="application/ld+json">{_json_ld(data)}</script></head><body class="home-page">
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="home")}<main id="main">
 
 <section class="home-intro"><div class="container">
@@ -213,9 +213,9 @@ def build_home(data: dict, content_items: list[dict], news_items: list[dict], al
 </div></section>
 
 <section class="home-dashboard" aria-label="Research Themes, News, Publications"><div class="container home-dashboard-grid">
-  <section class="home-panel home-panel--research" id="research"><div class="home-panel-head"><div class="home-panel-title">{_icon("research")}<h2>Research Themes</h2></div><a href="research/index.html">View all</a></div><div class="home-research-list">{_research_rows(research_items, 3)}</div></section>
-  <section class="home-panel home-panel--news" id="news"><div class="home-panel-head"><div class="home-panel-title">{_icon("news")}<h2>News</h2></div><a href="news/index.html">View all</a></div><div class="home-news-list">{_news_rows(news_items, 5)}</div></section>
-  <section class="home-panel home-panel--works" id="works"><div class="home-panel-head"><div class="home-panel-title">{_icon("publications")}<h2>Publications</h2></div><a href="works.html">View all</a></div><div class="home-work-list">{_selected_works(all_works, 3)}</div></section>
+  <section class="home-panel home-panel--research" id="research"><div class="home-panel-head"><a class="home-panel-title home-panel-title-link" href="research/index.html">{_icon("research")}<h2>Research Themes</h2></a><a href="research/index.html">View all</a></div><div class="home-research-list">{_research_rows(research_items, 3)}</div></section>
+  <section class="home-panel home-panel--news" id="news"><div class="home-panel-head"><a class="home-panel-title home-panel-title-link" href="news/index.html">{_icon("news")}<h2>News</h2></a><a href="news/index.html">View all</a></div><div class="home-news-list">{_news_rows(news_items, 5)}</div></section>
+  <section class="home-panel home-panel--works" id="works"><div class="home-panel-head"><a class="home-panel-title home-panel-title-link" href="works.html">{_icon("publications")}<h2>Publications</h2></a><a href="works.html">View all</a></div><div class="home-work-list">{_selected_works(all_works, 3)}</div></section>
 </div></section>
 
 <nav class="home-utility-nav" aria-label="その他のページ"><div class="container home-utility-grid">
@@ -234,7 +234,7 @@ def build_contact_page(data: dict) -> str:
     desc = f'{p["nameJa"]}へのお問い合わせ・所在地。'
     return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Contact | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow"><link rel="canonical" href="{esc(canonical)}">{favicon_links()}
-{og_meta(site, "Contact | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808h"><script src="script.js?v=20260808h" defer></script></head><body>
+{og_meta(site, "Contact | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808i"><script src="script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="contact")}<main id="main">
 <section class="works-hero contact-page-hero"><div class="container"><a class="back-link" href="index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1>Contact</h1><p>研究、共同研究、教育活動などに関するご連絡はこちらからお願いします。</p></div></section>
 <section class="contact-section contact-page-section"><div class="container contact-grid"><div class="contact-info"><h2>お問い合わせ・所在地</h2><dl class="contact-details"><div><dt>Email</dt><dd>{esc(contact.get("displayEmail", ""))}</dd></div><div><dt>Affiliation</dt><dd>{esc(contact.get("institution", ""))}</dd></div><div><dt>Location</dt><dd>{esc(contact.get("postalCode", ""))}<br>{esc(contact.get("address", ""))}<br><a href="{esc(contact.get("mapsUrl", ""))}" target="_blank" rel="noopener noreferrer">Google Mapsで見る ↗</a></dd></div></dl></div>
