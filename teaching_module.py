@@ -47,7 +47,7 @@ def build_teaching_page(data: dict, rm_data: dict[str, list[dict]], permalink: s
     desc = f'{p["nameJa"]}の担当科目・教育活動。'
     html = f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Teaching | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links()}
-{og_meta(site, "Teaching | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808k"><script src="script.js?v=20260808i" defer></script></head><body>
+{og_meta(site, "Teaching | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808m"><script src="script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="teaching")}<main id="main">
 <section class="works-hero teaching-hero"><div class="container"><a class="back-link" href="index.html">← トップページへ戻る</a><p class="eyebrow">Education</p><h1 class="page-heading-with-icon">{section_icon("teaching")}<span>Teaching</span></h1><p>担当科目・教育活動を掲載しています。</p><div class="teaching-source-row"><span>researchmapの公開情報をビルド時に反映</span><a href="https://researchmap.jp/{esc(permalink)}/teaching_experience" target="_blank" rel="noopener noreferrer">researchmapで確認する ↗</a></div></div></section>
 <section class="teaching-page-section"><div class="container teaching-page-grid"><aside class="teaching-page-aside"><p class="section-label">COURSES</p><h2>担当科目</h2><p>科目名、担当機関、担当期間を掲載しています。</p></aside><div class="teaching-course-list">{''.join(rendered)}</div></div></section>

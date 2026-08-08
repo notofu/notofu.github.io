@@ -177,7 +177,7 @@ def build_home(data: dict, content_items: list[dict], news_items: list[dict], al
 
     return f'''<!doctype html><html lang="{esc(site.get("language", "ja"))}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(site["title"])}</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(site["url"])}">{favicon_links()}
-{og_meta(site, site["title"], desc, site["url"])}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="feed.xml"><link rel="stylesheet" href="styles.css?v=20260808k"><script src="script.js?v=20260808i" defer></script><script type="application/ld+json">{_json_ld(data)}</script></head><body class="home-page">
+{og_meta(site, site["title"], desc, site["url"])}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="feed.xml"><link rel="stylesheet" href="styles.css?v=20260808m"><script src="script.js?v=20260808i" defer></script><script type="application/ld+json">{_json_ld(data)}</script></head><body class="home-page">
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="home")}<main id="main">
 
 <section class="home-intro"><div class="container">
@@ -223,7 +223,7 @@ def build_contact_page(data: dict) -> str:
     desc = f'{p["nameJa"]}へのお問い合わせ・所在地。'
     return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Contact | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow"><link rel="canonical" href="{esc(canonical)}">{favicon_links()}
-{og_meta(site, "Contact | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808k"><script src="script.js?v=20260808i" defer></script></head><body>
+{og_meta(site, "Contact | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808m"><script src="script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="contact")}<main id="main">
 <section class="works-hero contact-page-hero"><div class="container"><a class="back-link" href="index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1 class="page-heading-with-icon">{section_icon("contact")}<span>Contact</span></h1><p>研究、共同研究、教育活動などに関するご連絡はこちらからお願いします。</p></div></section>
 <section class="contact-section contact-page-section"><div class="container contact-grid"><div class="contact-info"><h2>お問い合わせ・所在地</h2><dl class="contact-details"><div><dt>Email</dt><dd>{esc(contact.get("displayEmail", ""))}</dd></div><div><dt>Affiliation</dt><dd>{esc(contact.get("institution", ""))}</dd></div><div><dt>Location</dt><dd>{esc(contact.get("postalCode", ""))}<br>{esc(contact.get("address", ""))}<br><a href="{esc(contact.get("mapsUrl", ""))}" target="_blank" rel="noopener noreferrer">Google Mapsで見る ↗</a></dd></div></dl></div>

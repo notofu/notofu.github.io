@@ -3201,3 +3201,119 @@ body .mobile-nav { display: none !important; }
   .works-hero .page-heading-with-icon .page-heading-icon { width: 25px; height: 25px; }
   .content-row-icon { width: 18px; height: 18px; }
 }
+
+/* ==========================================================================
+   2026-08-08l — graphite header: add one calm visual anchor to the site
+   ========================================================================== */
+:root {
+  --header-bg: #27343a;
+  --header-border: #35454c;
+  --header-text: #e8eeed;
+  --header-text-strong: #ffffff;
+  --header-accent: #69cdb3;
+}
+
+/* A single dark horizontal band gives the otherwise pale site a clear frame.
+   Keep everything else flat: no gradient, no shadow, no extra decoration. */
+body .site-header,
+.home-page .site-header {
+  background: rgba(39, 52, 58, .985);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: none;
+  backdrop-filter: blur(8px);
+}
+
+/* The existing wordmark is reused and simply reversed to white. */
+body .brand-logo,
+.home-page .brand-logo {
+  filter: brightness(0) invert(1);
+  opacity: .97;
+}
+body .brand-jp,
+.home-page .brand-jp {
+  color: #dbe4e2;
+}
+
+body .desktop-nav a,
+.home-page .desktop-nav a {
+  color: var(--header-text);
+}
+body .desktop-nav a:hover,
+body .desktop-nav a.is-active,
+.home-page .desktop-nav a:hover,
+.home-page .desktop-nav a.is-active {
+  color: var(--header-text-strong);
+}
+body .desktop-nav a.is-active::after,
+.home-page .desktop-nav a.is-active::after {
+  background: var(--header-accent);
+}
+
+/* Keyboard focus remains visible against the dark banner. */
+body .desktop-nav a:focus-visible,
+body .brand:focus-visible {
+  outline: 2px solid var(--header-accent);
+  outline-offset: 4px;
+}
+
+@media (max-width: 760px) {
+  body .site-header,
+  .home-page .site-header {
+    background: #27343a;
+  }
+}
+
+/* ========================================================================== 
+   2026-08-08m — definitive dark header override
+   Keep the site's note-like body light; use only the header as a calm anchor.
+   ========================================================================== */
+:root {
+  --noto-header-bg: #26343a;
+  --noto-header-line: #34454b;
+  --noto-header-text: #e7eeec;
+  --noto-header-strong: #ffffff;
+  --noto-header-accent: #62c6ad;
+}
+
+html body .site-header,
+html body.home-page .site-header {
+  background: var(--noto-header-bg) !important;
+  background-color: var(--noto-header-bg) !important;
+  border-bottom: 1px solid var(--noto-header-line) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html body .site-header .brand-logo,
+html body.home-page .site-header .brand-logo {
+  filter: brightness(0) invert(1) !important;
+  opacity: .98 !important;
+}
+
+html body .site-header .brand-jp,
+html body.home-page .site-header .brand-jp {
+  color: #d9e2e0 !important;
+}
+
+html body .site-header .desktop-nav a,
+html body.home-page .site-header .desktop-nav a {
+  color: var(--noto-header-text) !important;
+}
+
+html body .site-header .desktop-nav a:hover,
+html body .site-header .desktop-nav a.is-active,
+html body.home-page .site-header .desktop-nav a:hover,
+html body.home-page .site-header .desktop-nav a.is-active {
+  color: var(--noto-header-strong) !important;
+}
+
+html body .site-header .desktop-nav a.is-active::after,
+html body.home-page .site-header .desktop-nav a.is-active::after {
+  background: var(--noto-header-accent) !important;
+}
+
+html body .site-header .brand:focus-visible,
+html body .site-header .desktop-nav a:focus-visible {
+  outline: 2px solid var(--noto-header-accent) !important;
+  outline-offset: 4px;
+}
