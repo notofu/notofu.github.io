@@ -3079,3 +3079,89 @@ body .mobile-nav { display: none !important; }
   .home-page .desktop-nav { gap: 18px; }
   .home-page .desktop-nav a { font-size: .73rem; }
 }
+
+/* ========================================================================== 
+   2026-08-08j — improve home-panel typography without adding visual noise
+   ========================================================================== */
+
+/* Keep the note-like density, but avoid sub-12px editorial copy on desktop. */
+.home-page .home-panel-head h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.home-page .home-panel-head > a {
+  font-size: .8rem;
+  font-weight: 550;
+  color: #777c7f;
+}
+
+.home-page .home-research-copy h3 {
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.55;
+}
+.home-page .home-research-copy p {
+  margin-top: 7px;
+  color: #64696d;
+  font-size: .84rem;
+  line-height: 1.7;
+}
+
+.home-page .home-news-date {
+  color: #72777a;
+  font-size: .78rem;
+}
+.home-page .home-news-item .news-new {
+  font-size: .64rem;
+}
+.home-page .home-news-item p {
+  color: #2d3134;
+  font-size: .92rem;
+  line-height: 1.7;
+}
+
+.home-page .home-type-badge {
+  min-height: 25px;
+  padding: 4px 8px;
+  font-size: .68rem;
+}
+.home-page .home-work-copy h3 {
+  color: #292d30;
+  font-size: .92rem;
+  font-weight: 620;
+  line-height: 1.6;
+}
+.home-page .home-work-copy p {
+  margin-top: 5px;
+  color: #666b6e;
+  font-size: .78rem;
+  line-height: 1.55;
+}
+.home-page .home-work-item time,
+.home-page .home-panel--works .home-work-item time {
+  color: #74797c;
+  font-size: .75rem;
+}
+
+@media (max-width: 760px) {
+  .home-page .home-panel-head h2 { font-size: 1.14rem; }
+  .home-page .home-panel-head > a { font-size: .75rem; }
+  .home-page .home-research-copy h3 { font-size: .94rem; }
+  .home-page .home-research-copy p { font-size: .78rem; }
+  .home-page .home-news-date { font-size: .72rem; }
+  .home-page .home-news-item p { font-size: .88rem; }
+  .home-page .home-work-copy h3 { font-size: .87rem; }
+  .home-page .home-work-copy p { font-size: .73rem; }
+  .home-page .home-work-item time,
+  .home-page .home-panel--works .home-work-item time { font-size: .7rem; }
+}
+
+@media (max-width: 480px) {
+  .home-page .home-panel-head h2 { font-size: 1.08rem; }
+  .home-page .home-research-copy h3 { font-size: .91rem; }
+  .home-page .home-research-copy p { font-size: .75rem; }
+  .home-page .home-news-item p { font-size: .84rem; }
+  .home-page .home-work-copy h3 { font-size: .84rem; }
+  .home-page .home-work-copy p { font-size: .71rem; }
+}
