@@ -219,7 +219,14 @@ def build_content_detail(data: dict, item: dict, all_works: list[dict]) -> str:
     body, toc = markdown_to_html_with_toc(item.get("bodyMarkdown", ""), prefix="../")
     image = item.get("detailImage") or item["image"]
     image = local_url(image, "../")
+    full_image = local_url(item.get("image", ""), "../")
     fallback_class = " article-hero-image--fallback" if item.get("_imageFallback") else ""
+    zoom_class = "" if item.get("_imageFallback") else " is-zoomable"
+    zoom_attrs = "" if item.get("_imageFallback") else (
+        f' data-lightbox-src="{esc(full_image)}"'
+        f' data-lightbox-alt="{esc(item["imageAlt"])}"'
+        ' tabindex="0" role="button" aria-label="画像を拡大表示"'
+    )
     tags = ''.join(f'<span>{esc(tag)}</span>' for tag in item.get("tags", []))
     date_html = f'<time datetime="{esc(item["date"])}">{esc(item["date"].replace("-", "."))}</time>' if item.get("date") else ""
     toc_html = ""
@@ -242,7 +249,7 @@ def build_content_detail(data: dict, item: dict, all_works: list[dict]) -> str:
 <p class="breadcrumb"><a href="../index.html">Home</a> / <a href="../research/index.html">Research</a> / {esc(item["categoryLabel"])}</p>
 <div class="article-meta-row">{render_category_badge(item)}{date_html}</div><h1>{esc(item["title"])}</h1>
 <p class="article-lead">{esc(item.get("summary", ""))}</p>
-<div class="article-hero-image{fallback_class}"><img src="{esc(image)}" alt="{esc(item["imageAlt"])}" decoding="async"></div>
+<div class="article-hero-image{fallback_class}"><img class="article-detail-image{zoom_class}" src="{esc(image)}" alt="{esc(item["imageAlt"])}" decoding="async"{zoom_attrs}></div>
 <div class="article-tags">{tags}</div>{toc_html}<div class="article-body">{body}</div>{rel}
 <div class="article-back"><a href="../research/index.html">← 一覧へ戻る</a></div></div></article></main>
 <footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''

@@ -58,6 +58,78 @@
     );
   });
 
+  // Article image lightbox. The large source is loaded only after the user opens it.
+  const zoomableImages = document.querySelectorAll('[data-lightbox-src]');
+  if (zoomableImages.length) {
+    const overlay = document.createElement('div');
+    overlay.className = 'image-lightbox';
+    overlay.hidden = true;
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', '画像の拡大表示');
+    overlay.innerHTML = `
+      <div class="image-lightbox__backdrop" data-lightbox-close></div>
+      <div class="image-lightbox__panel">
+        <button class="image-lightbox__close" type="button" data-lightbox-close aria-label="拡大表示を閉じる">×</button>
+        <img class="image-lightbox__image" alt="">
+        <p class="image-lightbox__caption" hidden></p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const lightboxImage = overlay.querySelector('.image-lightbox__image');
+    const caption = overlay.querySelector('.image-lightbox__caption');
+    const closeButton = overlay.querySelector('.image-lightbox__close');
+    let previouslyFocused = null;
+
+    const closeLightbox = () => {
+      if (overlay.hidden) return;
+      overlay.hidden = true;
+      document.body.classList.remove('lightbox-open');
+      lightboxImage.removeAttribute('src');
+      lightboxImage.alt = '';
+      if (caption) {
+        caption.textContent = '';
+        caption.hidden = true;
+      }
+      previouslyFocused?.focus?.();
+    };
+
+    const openLightbox = (trigger) => {
+      const src = trigger.dataset.lightboxSrc;
+      if (!src) return;
+      const alt = trigger.dataset.lightboxAlt || trigger.getAttribute('alt') || '';
+      previouslyFocused = trigger;
+      lightboxImage.src = src;
+      lightboxImage.alt = alt;
+      if (caption) {
+        caption.textContent = alt;
+        caption.hidden = !alt;
+      }
+      overlay.hidden = false;
+      document.body.classList.add('lightbox-open');
+      closeButton?.focus();
+    };
+
+    zoomableImages.forEach((image) => {
+      image.addEventListener('click', () => openLightbox(image));
+      image.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openLightbox(image);
+        }
+      });
+    });
+
+    overlay.querySelectorAll('[data-lightbox-close]').forEach((element) => {
+      element.addEventListener('click', closeLightbox);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (!overlay.hidden && event.key === 'Escape') closeLightbox();
+    });
+  }
+
   const contactForm = document.querySelector('[data-contact-form]');
   contactForm?.addEventListener('submit', (event) => {
     event.preventDefault();

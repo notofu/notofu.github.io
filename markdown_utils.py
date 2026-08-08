@@ -11,9 +11,13 @@ def inline_markdown(text: str, prefix: str = "") -> str:
 
     def image_repl(match):
         alt, url = match.group(1), html.unescape(match.group(2))
+        image_url = esc(local_url(url, prefix))
+        label = alt or "記事内画像"
         return (
-            f'<img class="article-inline-image" src="{esc(local_url(url, prefix))}" '
-            f'alt="{alt}" loading="lazy" decoding="async">'
+            f'<img class="article-inline-image is-zoomable" src="{image_url}" '
+            f'alt="{alt}" loading="lazy" decoding="async" '
+            f'data-lightbox-src="{image_url}" data-lightbox-alt="{alt}" '
+            f'tabindex="0" role="button" aria-label="{label}を拡大表示">'
         )
 
     escaped = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', image_repl, escaped)
