@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import http.client
 import json
 import os
+import socket
 import time
 import urllib.error
 import urllib.parse
@@ -61,7 +63,7 @@ def extract_items(payload) -> list[dict]:
     return []
 
 
-def fetch_resource(permalink: str, resource: str, limit: int = 100, retries: int = 2) -> list[dict]:
+def fetch_resource(permalink: str, resource: str, limit: int = 100, retries: int = 3) -> list[dict]:
     query = urllib.parse.urlencode({"limit": limit})
     url = f"{API_BASE}/{urllib.parse.quote(permalink)}/{resource}?{query}"
     req = urllib.request.Request(
@@ -74,13 +76,26 @@ def fetch_resource(permalink: str, resource: str, limit: int = 100, retries: int
     last_error: Exception | None = None
     for attempt in range(retries):
         try:
-            with urllib.request.urlopen(req, timeout=8) as response:
+            with urllib.request.urlopen(req, timeout=12) as response:
                 payload = json.loads(response.read().decode("utf-8"))
             return [x for x in extract_items(payload) if x.get("display") != "hidden"]
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError) as exc:
+        except (
+            urllib.error.URLError,
+            urllib.error.HTTPError,
+            TimeoutError,
+            socket.timeout,
+            ConnectionError,
+            OSError,
+            http.client.HTTPException,
+            json.JSONDecodeError,
+        ) as exc:
+            # researchmap occasionally resets a TLS connection or closes it
+            # before a response is complete. Treat those as temporary API
+            # failures: retry here, then let sync_researchmap() fall back
+            # without aborting the whole GitHub Pages build.
             last_error = exc
             if attempt + 1 < retries:
-                time.sleep(1.2 * (attempt + 1))
+                time.sleep(1.5 * (attempt + 1))
     raise RuntimeError(f"researchmap fetch failed: {resource}: {last_error}")
 
 
