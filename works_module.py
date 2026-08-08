@@ -7,7 +7,7 @@ from researchmap_sync import (
     localized, names, normalized_misc_and_presentations, normalized_publications,
     period_from_to, format_period,
 )
-from site_common import esc, favicon_links, header, og_meta
+from site_common import esc, favicon_links, header, og_meta, section_icon
 
 
 def _rm_url(permalink: str, resource: str, item: dict) -> str:
@@ -120,15 +120,15 @@ def build_works_page(data: dict, rm_data: dict[str, list[dict]], permalink: str 
     projects = rm_data.get("research_projects", [])
     property_items = rm_data.get("industrial_property_rights", [])
     academic = rm_data.get("academic_contribution", [])
-    canonical = urljoin(site["url"], "works.html")
+    canonical = urljoin(site["url"], "publications.html")
     desc = "論文、国際会議、研究発表、研究課題、産業財産権、学術貢献活動を掲載しています。"
     source_note = 'researchmapの公開情報をGitHub Actionsのビルド時に取得しています。'
     html = f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Works | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links()}
-{og_meta(site, "Works | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808i"><script src="script.js?v=20260808i" defer></script></head><body>
+<title>Publications | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links()}
+{og_meta(site, "Publications | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808k"><script src="script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="works")}<main id="main">
-<section class="hero works-hero"><div class="container"><a class="back-link" href="index.html">← トップページへ戻る</a><p class="eyebrow">Research Outputs &amp; Activities</p><h1>Works</h1><p>{esc(desc)}</p><p class="works-source-note">{esc(source_note)}</p>
-<nav class="works-local-nav" aria-label="Worksページ内メニュー"><a href="#publications">Publications</a><a href="#presentations">Presentations &amp; MISC</a><a href="#projects">Projects &amp; Grants</a><a href="#ip">Intellectual Property</a><a href="#service">Academic Service</a></nav></div></section>
+<section class="hero works-hero"><div class="container"><a class="back-link" href="index.html">← トップページへ戻る</a><p class="eyebrow">Research Outputs &amp; Activities</p><h1 class="page-heading-with-icon">{section_icon("publications")}<span>Publications</span></h1><p>{esc(desc)}</p><p class="works-source-note">{esc(source_note)}</p>
+<nav class="works-local-nav" aria-label="Publicationsページ内メニュー"><a href="#publications">Publications</a><a href="#presentations">Presentations &amp; MISC</a><a href="#projects">Projects &amp; Grants</a><a href="#ip">Intellectual Property</a><a href="#service">Academic Service</a></nav></div></section>
 <section class="section" id="publications"><div class="container"><div class="works-section-title"><div><h2>論文・国際会議</h2><p class="section-label">PUBLICATIONS</p></div><p class="section-intro">査読論文・国際会議論文など。</p></div><div class="output-list">{_output_rows(papers)}</div></div></section>
 <section class="section section--soft" id="presentations"><div class="container"><div class="works-section-title"><div><h2>研究発表・MISC</h2><p class="section-label">PRESENTATIONS &amp; MISC</p></div></div><div class="output-list">{_output_rows(misc)}</div></div></section>
 <section class="section" id="projects"><div class="container"><div class="works-section-title"><div><h2>共同研究・競争的資金等の研究課題</h2><p class="section-label">PROJECTS &amp; GRANTS</p></div></div><div class="rmap-achievement-list">{_projects(projects, permalink)}</div></div></section>

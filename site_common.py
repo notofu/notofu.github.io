@@ -43,6 +43,24 @@ def favicon_links(prefix: str = "") -> str:
     )
 
 
+def section_icon(name: str, class_name: str = "page-heading-icon") -> str:
+    """Render the same lightweight line icon everywhere on the site."""
+    icons = {
+        "research": '<rect x="4" y="5" width="7" height="6" rx="1"/><rect x="13" y="4" width="7" height="6" rx="1"/><rect x="8" y="14" width="8" height="6" rx="1"/><path d="M10 11l2 3M15 10l-2 4"/>',
+        "news": '<rect x="5" y="6" width="13" height="13" rx="1.5"/><path d="M8 9h7M8 12h7M8 15h5"/><path d="M18 8h2v9a2 2 0 0 1-2 2"/>',
+        "publications": '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 12h6M9 15h6M9 18h4"/>',
+        "teaching": '<path d="M4 5.5c3-1 5-.7 8 1.2 3-1.9 5-2.2 8-1.2v13c-3-1-5-.7-8 1.2-3-1.9-5-2.2-8-1.2z"/><path d="M12 6.7v13"/>',
+        "blog": '<path d="M6 4h12v16H6z"/><path d="M9 8h6M9 11h6M9 14h4"/><path d="M16.5 4.5l3 3-6.8 6.8-3.2.7.7-3.2z"/>',
+        "contact": '<path d="M4 6h16v12H4z"/><path d="M4.8 7l7.2 6 7.2-6"/>',
+    }
+    body = icons.get(name, icons["publications"])
+    return (
+        f'<svg class="{esc(class_name)}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" '
+        'fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'
+        f'{body}</svg>'
+    )
+
+
 def og_meta(site: dict, title: str, description: str, canonical: str,
             image: str | None = None, og_type: str = "website") -> str:
     image_url = image or site.get("ogImage", "assets/og-image.png")
@@ -64,7 +82,7 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
     links = [
         ("home", f"{prefix}index.html", "Home"),
         ("research", f"{prefix}research/index.html", "Research"),
-        ("works", f"{prefix}works.html", "Publications"),
+        ("works", f"{prefix}publications.html", "Publications"),
         ("teaching", f"{prefix}teaching.html", "Teaching"),
         ("contact", f"{prefix}contact.html", "Contact"),
     ]

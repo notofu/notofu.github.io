@@ -1,15 +1,9 @@
 # Changes
 
-トップページの `Research Themes / News / Publications` の可読性を改善しました。
+サイト内の名称・アイコンの一貫性を改善しました。
 
-- パネル見出し: 約17px → 約20px
-- Research タイトル: 約15px → 16px
-- Research 説明: 約12px → 約13.5px
-- News 本文: 約13px → 約15px
-- News 日付: 約11px → 約12.5px
-- Publications タイトル: 約13px → 約15px
-- Publications 掲載誌: 約11px → 約12.5px
-- Publications 年: 約11px → 12px
-- 分類バッジもわずかに拡大
+トップページの Research Themes / News / Publications / Teaching / Blog / Contact で使用している線画アイコンを `site_common.py` の共通部品に統一し、遷移先でも同じ意匠を使用します。
 
-太字・装飾を増やさず、文字サイズと文字色だけで読みやすさを上げています。
+また、Research ページ内の Research / Blog 見出しにも同系統のアイコンを表示します。
+
+研究業績ページは、表示名・ブラウザタイトル・OGPタイトルを `Publications` に統一しました。正式URLも `/publications.html` とし、旧 `/works.html` は互換用として残します。

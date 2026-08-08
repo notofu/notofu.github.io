@@ -3165,3 +3165,39 @@ body .mobile-nav { display: none !important; }
   .home-page .home-work-copy h3 { font-size: .84rem; }
   .home-page .home-work-copy p { font-size: .71rem; }
 }
+
+
+/* ==========================================================================
+   2026-08-08k — shared section icons + consistent destination headings
+   ========================================================================== */
+.page-heading-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.page-heading-icon {
+  width: .78em;
+  height: .78em;
+  flex: 0 0 auto;
+  color: var(--note-accent, #2f8f78);
+}
+.content-row-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  color: var(--note-accent, #2f8f78);
+}
+.content-row--blog .content-row-icon { color: #777d7f; }
+
+/* Destination pages use the exact same quiet icon language as the home page. */
+.works-hero .page-heading-with-icon { margin-top: 0; }
+.works-hero .page-heading-with-icon .page-heading-icon {
+  width: 30px;
+  height: 30px;
+}
+
+@media (max-width: 760px) {
+  .works-hero .page-heading-with-icon { gap: 9px; }
+  .works-hero .page-heading-with-icon .page-heading-icon { width: 25px; height: 25px; }
+  .content-row-icon { width: 18px; height: 18px; }
+}

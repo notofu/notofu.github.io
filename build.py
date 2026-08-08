@@ -62,6 +62,8 @@ def main() -> None:
 
     # Top page uses the same build-time data, so it opens immediately without API waits.
     (DIST / "index.html").write_text(build_home(data, content_items, news_items, all_works, teaching_rows), encoding="utf-8")
+    (DIST / "publications.html").write_text(works_html, encoding="utf-8")
+    # Backward-compatible alias for old bookmarks/links. The page itself canonicals to publications.html.
     (DIST / "works.html").write_text(works_html, encoding="utf-8")
     (DIST / "teaching.html").write_text(teaching_html, encoding="utf-8")
     (DIST / "contact.html").write_text(build_contact_page(data), encoding="utf-8")
@@ -88,7 +90,7 @@ def main() -> None:
     (DIST / "feed.xml").write_text(build_feed(data["site"], news_items, content_items), encoding="utf-8")
     entries = [
         {"url": site_url, "lastmod": date.today().isoformat()},
-        {"url": urljoin(site_url, "works.html"), "lastmod": date.today().isoformat()},
+        {"url": urljoin(site_url, "publications.html"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "teaching.html"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "contact.html"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "research/"), "lastmod": date.today().isoformat()},

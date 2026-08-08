@@ -6,7 +6,7 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 from markdown_utils import markdown_to_html_with_toc
-from site_common import esc, favicon_links, header, local_url, og_meta
+from site_common import esc, favicon_links, header, local_url, og_meta, section_icon
 
 
 def _front_value(value: str):
@@ -112,9 +112,9 @@ def build_news_index(data: dict, news_items: list[dict]) -> str:
     desc = f'{p["nameJa"]} / noto Lab の最新情報・お知らせ。'
     return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>News | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links("../")}
-{og_meta(site, "News | noto Lab", desc, canonical)}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="../feed.xml"><link rel="stylesheet" href="../styles.css?v=20260808i"><script src="../script.js?v=20260808i" defer></script></head><body>
+{og_meta(site, "News | noto Lab", desc, canonical)}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="../feed.xml"><link rel="stylesheet" href="../styles.css?v=20260808k"><script src="../script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, prefix="../", active="home")}
-<main id="main"><section class="works-hero news-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><p class="eyebrow">Updates</p><h1>News</h1><p>研究・発表・サイト更新などの最新情報です。</p></div></section>
+<main id="main"><section class="works-hero news-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><p class="eyebrow">Updates</p><h1 class="page-heading-with-icon">{section_icon("news")}<span>News</span></h1><p>研究・発表・サイト更新などの最新情報です。</p></div></section>
 <section class="news-archive"><div class="container news-archive-inner">{body}</div></section></main><footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
 
 
@@ -133,7 +133,7 @@ def build_news_detail(data: dict, item: dict) -> str:
     desc = item.get("summary") or item.get("title", "")
     return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links("../")}
-{og_meta(site, title, desc, canonical, item.get("image") or None, "article")}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="../feed.xml"><link rel="stylesheet" href="../styles.css?v=20260808i"><script src="../script.js?v=20260808i" defer></script></head><body>
+{og_meta(site, title, desc, canonical, item.get("image") or None, "article")}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="../feed.xml"><link rel="stylesheet" href="../styles.css?v=20260808k"><script src="../script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, prefix="../", active="home")}<main id="main"><article class="article-page"><div class="container article-container"><p class="breadcrumb"><a href="../index.html">Home</a> / <a href="index.html">News</a></p>
 <div class="article-meta-row"><time datetime="{esc(item.get("date", ""))}">{esc(display_date)}</time>{new_badge}</div><h1>{esc(item.get("title", ""))}</h1>{lead}{toc_html}<div class="article-body">{body}{related}</div><div class="article-back"><a href="index.html">← News一覧へ戻る</a></div></div></article></main>
 <footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="../index.html">トップページへ戻る ←</a></div></footer></body></html>'''

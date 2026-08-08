@@ -5,7 +5,7 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 from markdown_utils import markdown_to_html_with_toc
-from site_common import esc, favicon_links, header, is_external, local_url, og_meta, shorten
+from site_common import esc, favicon_links, header, is_external, local_url, og_meta, section_icon, shorten
 
 CONTENT_CATEGORIES = {
     "research": {"label": "研究テーマ", "badge": "Research", "class": "research", "dir": "research"},
@@ -173,9 +173,15 @@ def render_content_row(category: str, items: list[dict], prefix: str = "../") ->
             '<button type="button" data-content-prev aria-label="前へ">←</button>'
             '<button type="button" data-content-next aria-label="次へ">→</button></div>'
         )
+    if category == "research":
+        heading_mark = section_icon("research", "content-row-icon")
+    elif category == "blog":
+        heading_mark = section_icon("blog", "content-row-icon")
+    else:
+        heading_mark = '<span class="content-row-mark" aria-hidden="true"></span>'
     return (
         f'<section class="content-row content-row--{esc(cfg["class"])}" id="{esc(category)}" data-content-row>'
-        '<div class="content-row-head"><div><span class="content-row-mark" aria-hidden="true"></span>'
+        f'<div class="content-row-head"><div>{heading_mark}'
         f'<h2>{esc(cfg["label"])}</h2><span class="content-count">{len(items)}</span></div>{controls}</div>'
         f'<div class="content-row-slider" data-content-slider tabindex="0" aria-label="{esc(cfg["label"])}一覧">{cards}</div></section>'
     )
@@ -268,7 +274,7 @@ def build_content_detail(data: dict, item: dict, all_works: list[dict]) -> str:
 <title>{esc(title)}</title><meta name="description" content="{esc(description)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <link rel="canonical" href="{esc(canonical)}">{favicon_links("../")}
 {og_meta(site, title, description, canonical, og_image, "article")}
-<link rel="stylesheet" href="../styles.css?v=20260808i"><script src="../script.js?v=20260808i" defer></script></head><body>
+<link rel="stylesheet" href="../styles.css?v=20260808k"><script src="../script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, prefix="../", active="research")}
 <main id="main"><article class="article-page"><div class="container article-container">
 <p class="breadcrumb"><a href="../index.html">Home</a> / <a href="../research/index.html">Research</a> / {esc(item["categoryLabel"])}</p>
@@ -288,9 +294,9 @@ def build_research_index(data: dict, content_items: list[dict]) -> str:
     desc = "研究テーマ、卒業研究、Blogの記事一覧です。"
     return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Research | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links("../")}
-{og_meta(site, "Research | noto Lab", desc, canonical)}<link rel="stylesheet" href="../styles.css?v=20260808i"><script src="../script.js?v=20260808i" defer></script></head><body>
+{og_meta(site, "Research | noto Lab", desc, canonical)}<link rel="stylesheet" href="../styles.css?v=20260808k"><script src="../script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, prefix="../", active="research")}
-<main id="main"><section class="works-hero content-hub-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1>Research</h1><p>研究テーマ、卒業研究、Blogをまとめています。気になる項目から詳細をご覧ください。</p>
+<main id="main"><section class="works-hero content-hub-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1 class="page-heading-with-icon">{section_icon("research")}<span>Research</span></h1><p>研究テーマ、卒業研究、Blogをまとめています。気になる項目から詳細をご覧ください。</p>
 <nav class="content-filter-nav" aria-label="コンテンツカテゴリ"><a href="#research">研究テーマ <span>{len(groups['research'])}</span></a><a href="#graduation">卒業研究 <span>{len(groups['graduation'])}</span></a><a href="#blog">Blog <span>{len(groups['blog'])}</span></a></nav></div></section>
 <section class="content-hub"><div class="container">{rows}</div></section></main>
 <footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
