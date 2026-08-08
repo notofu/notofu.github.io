@@ -7,6 +7,7 @@ date: 2026-08-07
 tags: 引き込み, 同期, Kuramotoモデル
 order: 4
 published: true
+relatedWrks: 演奏者識別, kuramoto, Pianist Identification
 ---
 
 ## 概要
