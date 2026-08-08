@@ -193,7 +193,13 @@ def related_works(item: dict, works: list[dict], limit: int = 4) -> list[dict]:
         score = sum(1 for key in keys if key in hay)
         if score:
             scored.append((score, work))
-    scored.sort(key=lambda x: (x[0], x[1].get("year", "")), reverse=True)
+    # 表示順は発表年の新しい順。同一年では関連度の高い業績を先にする。
+    def year_value(work: dict) -> int:
+        raw = str(work.get("year", ""))
+        m = re.search(r"(?:19|20)\d{2}", raw)
+        return int(m.group(0)) if m else 0
+
+    scored.sort(key=lambda x: (year_value(x[1]), x[0]), reverse=True)
     return [x[1] for x in scored[:limit]]
 
 
