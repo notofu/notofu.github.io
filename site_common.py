@@ -74,11 +74,6 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
         f'{" aria-current=\"page\"" if key == active else ""}>{label}</a>'
         for key, u, label in links
     )
-    mobile = "".join(
-        f'<a href="{u}" class="{"is-active" if key == active else ""}"'
-        f'{" aria-current=\"page\"" if key == active else ""}>{label}</a>'
-        for key, u, label in links
-    )
     return f'''<header class="site-header" id="top">
   <div class="container header-inner">
     <a class="brand" href="{prefix}index.html" aria-label="noto Lab ホーム">
@@ -86,7 +81,5 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
       <span class="brand-jp">能登研究室</span>
     </a>
     <nav class="desktop-nav" aria-label="主要メニュー">{nav}</nav>
-    <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="モバイルメニュー">{mobile}</nav>
 </header>'''

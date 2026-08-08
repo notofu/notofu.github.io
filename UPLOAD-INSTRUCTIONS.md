@@ -1,25 +1,25 @@
-# GitHubアップロード手順
+# Upload instructions
 
-今回、リポジトリ直下で上書きするのは次の4ファイルです。
+GitHub リポジトリ `notofu/notofu.github.io` のルートで、以下の7ファイルを同名ファイルへ上書きしてください。
 
-- `build.py`
 - `home_module.py`
 - `site_common.py`
 - `styles.css`
+- `content_module.py`
+- `news_module.py`
+- `teaching_module.py`
+- `works_module.py`
 
-`content.json`、`contents/`、`assets/`、`script.js`、その他の記事ファイルは変更しないでください。
+`content.json`、`contents/`、`assets/`、`script.js` は変更不要です。
 
-## 変更内容
+## 今回の変更
 
-- 大きな標語・Hero画像を削除
-- 既存のプロフィール概要だけをトップ上部に小さく表示
-- `Research Themes / News / Publications` を横3列で維持
-- noteに近い低彩度・細い罫線・小さめの文字・影なしのUIへ変更
-- Research Themesの一覧は、文章左・小さなサムネイル右のnote風レイアウト
-- `Teaching / Blog / Contact` は高さ約50pxのナビゲーションに縮小
-- Contactを独立した `contact.html` として自動生成
-- 既存の問い合わせ先・所在地・メールフォームをContactページで再利用
-- `noto Lab` の下の `能登研究室` は維持
-- CSS/JSキャッシュ対策としてトップ・Contactで `?v=20260808d` を使用
+- トップページを `Research Themes → News → Publications` の縦並びへ変更
+- 各セクションを横幅いっぱいのnote風リストへ変更
+- トップページの「ページ上部へ戻る」を削除
+- ヘッダーを全ページで同じデザインに統一
+- ハンバーガーメニュー（三本線）と重複モバイルメニューを削除
+- スマホでは同じナビを横スクロール表示
+- CSS/JS の参照を `?v=20260808g` に統一し、古いCSSキャッシュを回避
 
-GitHub Actionsが緑になったら公開完了です。
+アップロード後、GitHub Actions の `Deploy GitHub Pages` が緑になれば完了です。
