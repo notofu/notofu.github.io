@@ -1,0 +1,240 @@
+[
+  {
+    "section": "papers",
+    "year": "2026",
+    "type": "国際会議論文（査読あり）",
+    "title": "Analysis of the Score/Keyboard Gaze Activity of Elderly Piano Learners, Using Non-contact Gaze Estimation",
+    "meta": "Kaede Noto, Kaoru Mikami, Hiroki Watanabe, Akiko Koan, Yoshinari Takegawa / Entertainment Computing - ICEC 2026 (Lecture Notes in Computer Science)"
+  },
+  {
+    "section": "papers",
+    "year": "2026",
+    "type": "論文",
+    "title": "ピアノ演奏における実時間鍵盤上視線取得システムの設計と実装",
+    "meta": "三上薫, 能登楓, 渡邉拓貴, 平田圭二, 竹川佳成 / 情報処理学会論文誌テクニカルノート, 67(7)"
+  },
+  {
+    "section": "papers",
+    "year": "2025",
+    "type": "査読論文",
+    "title": "探索順序・作成における制約を導入した音楽的繰返しパターン探索",
+    "meta": "能登楓, 竹川佳成, 前澤陽, 藤島琢哉, 平田圭二 / 情報処理学会論文誌, 66(3), 566–576"
+  },
+  {
+    "section": "papers",
+    "year": "2024",
+    "type": "国際会議論文（査読あり）",
+    "title": "Design and Implementation of a Practice Record Visualization System Using Piano Performance Tracking Technology",
+    "meta": "Haruna Mori, Mio Sasaki, Kaede Noto, Yoshinari Takegawa, Keiji Hirata / 8th International Conference on Computer-Human Interaction Research and Applications (CHIRA 2024), 289–303"
+  },
+  {
+    "section": "papers",
+    "year": "2023",
+    "type": "国際会議発表",
+    "title": "Practice Progress Visualization System to Support Piano Teachers",
+    "meta": "Mio Sasaki, Kaede Noto, Yoshinari Takegawa, Keiji Hirata / The 17th International Conference on Music Perception and Cognition (ICMPC17) / AP-SC 2023"
+  },
+  {
+    "section": "papers",
+    "year": "2023",
+    "type": "国際会議論文（査読あり）",
+    "title": "Music Boundary Detection Using Local Contextual Information Based on Implication-Realization Model",
+    "meta": "Kaede Noto, Akira Maezawa, Yoshinari Takegawa, Takuya Fujishima, Keiji Hirata / Sound and Music Computing Conference (SMC 2023), 232–238"
+  },
+  {
+    "section": "papers",
+    "year": "2022",
+    "type": "査読論文（テクニカルノート）",
+    "title": "視線情報の特性を考慮した情報統合による楽譜追跡手法",
+    "meta": "能登楓, 竹川佳成, 平田圭二 / 情報処理学会論文誌, 63(9), 1518–1522"
+  },
+  {
+    "section": "papers",
+    "year": "2021",
+    "type": "国際会議論文（査読あり）",
+    "title": "Unsupervised Method for Implementing Implication-Realization Model Analyzer on Computer",
+    "meta": "Kaede Noto, Yoshinari Takegawa, Keiji Hirata / Computer Music Multidisciplinary Research (CMMR 2021), 145–154"
+  },
+  {
+    "section": "papers",
+    "year": "2021",
+    "type": "国際会議論文（査読あり）",
+    "title": "A Rule-Based Method for Implementing Implication-Realization Model",
+    "meta": "Kaede Noto, Yoshinari Takegawa, Keiji Hirata / Computer Music Multidisciplinary Research (CMMR), Lecture Notes in Computer Science 13770, 238–250"
+  },
+  {
+    "section": "papers",
+    "year": "2019",
+    "type": "国際会議論文（査読あり）",
+    "title": "Adaptive Score-Following System by Integrating Gaze Information",
+    "meta": "Kaede Noto, Yoshinari Takegawa, Keiji Hirata / 16th Sound and Music Computing Conference (SMC 2019), 401–406"
+  },
+  {
+    "section": "misc",
+    "year": "2026",
+    "type": "研究会発表",
+    "title": "曲非依存な演奏者識別のための，間の取り方とルバート特徴に基づく個人特性特徴量の設計",
+    "meta": "能登楓 / 音学シンポジウム2026（第146回MUS・第160回SLP合同研究発表会）"
+  },
+  {
+    "section": "misc",
+    "year": "2025",
+    "type": "学会発表",
+    "title": "大学生と高齢者のピアノ演奏ミス－視線計測による分析－",
+    "meta": "古庵晶子, 竹川佳成, 能登楓, 三上薫 / 日本音楽教育学会 第56回大会"
+  },
+  {
+    "section": "misc",
+    "year": "2025",
+    "type": "研究会発表",
+    "title": "大学生と高齢者のピアノ演奏ミス－楽譜と鍵盤の視線計測による分析－",
+    "meta": "古庵晶子, 竹川佳成, 能登楓, 三上薫 / 関西楽理研究会 第202回例会"
+  },
+  {
+    "section": "misc",
+    "year": "2025",
+    "type": "研究会発表",
+    "title": "視線計測結果にもとづく高齢者のピアノ演奏ミスの分析",
+    "meta": "古庵晶子, 竹川佳成, 能登楓, 三上薫 / 日本音楽知覚認知学会 2025年度 春季研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2025",
+    "type": "研究会発表",
+    "title": "ピアノ演奏における実時間鍵盤上視線取得システムの開発とその応用",
+    "meta": "三上薫, 能登楓, 渡邊拓貴, 古庵晶子 / 日本音楽知覚認知学会 2025年度 春季研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2025",
+    "type": "紀要・研究報告",
+    "title": "動画データから見た大学生と高齢者のピアノ演奏ミスの実際2―運指の習得の必要性―",
+    "meta": "古庵晶子, 竹川佳成, 能登楓 / 京都ノートルダム女子大学『こども教育研究』(11)"
+  },
+  {
+    "section": "misc",
+    "year": "2025",
+    "type": "紀要・研究報告",
+    "title": "動画データから見た大学生と高齢者のピアノ演奏ミスの実際1―視線移動の速さの必要性―",
+    "meta": "古庵晶子, 竹川佳成, 能登楓 / 京都ノートルダム女子大学『こども教育研究』(11)"
+  },
+  {
+    "section": "misc",
+    "year": "2024",
+    "type": "研究報告",
+    "title": "視線情報と打鍵情報から見たピアノ演奏ミス：高齢者と若年成人の比較に向けて",
+    "meta": "古庵晶子, 竹川佳成, 能登楓, 三上薫 / 関西楽理研究会, 40, 173–188"
+  },
+  {
+    "section": "misc",
+    "year": "2023",
+    "type": "学会発表",
+    "title": "視線情報と打鍵情報を用いたピアノ演奏ミスの分析－大学生のピアノ演奏を中心とした高齢者との比較－",
+    "meta": "古庵晶子, 竹川佳成, 能登楓 / 日本音楽教育学会 第54回大会"
+  },
+  {
+    "section": "misc",
+    "year": "2023",
+    "type": "研究会発表",
+    "title": "高齢者と大学生のピアノ演奏ミス－視線情報と打鍵情報による分析－",
+    "meta": "古庵晶子, 竹川佳成, 能登楓 / 関西楽理研究会 第194回例会"
+  },
+  {
+    "section": "misc",
+    "year": "2023",
+    "type": "研究会発表",
+    "title": "計算論的暗意-実現モデルに向けた旋律における暗意-実現／否定構造の統計的分析とラベル列の階層化",
+    "meta": "釜石健太郎, 能登楓, 竹川佳成, 平田圭二 / 音楽情報処理学会 第138回研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2023",
+    "type": "研究報告",
+    "title": "高齢ピアノ学習者における演奏のつまずきと視線の関係：演奏動画の分析より",
+    "meta": "古庵晶子, 竹川佳成, 能登楓, 三上香子 / 関西楽理研究 (39), 85–105"
+  },
+  {
+    "section": "misc",
+    "year": "2022",
+    "type": "学会発表",
+    "title": "視線情報と打鍵情報から分析する大学生の演奏ミスについて－ピアノ演奏における高齢者との比較－",
+    "meta": "古庵晶子, 竹川佳成, 能登楓 / 音楽学習学会 第19回大会"
+  },
+  {
+    "section": "misc",
+    "year": "2022",
+    "type": "研究会発表",
+    "title": "高齢者のピアノ演奏動画にもとづく演奏特性の分析－視線情報から観測されるつまずき－その2",
+    "meta": "古庵晶子, 竹川佳成, 能登楓 / 日本音楽知覚認知学会 2022年度春季研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2021",
+    "type": "研究会発表",
+    "title": "高齢者のピアノ演奏動画にもとづく演奏特性の分析－視線情報から観測されるつまずき－",
+    "meta": "古庵晶子, 竹川佳成, 能登楓 / 日本音楽知覚認知学会 2021年度秋季研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2021",
+    "type": "研究会発表",
+    "title": "暗意-実現モデルを用いた旋律抽象化に基づく類似度計算手法",
+    "meta": "能登楓, 竹川佳成, 前澤陽, 藤島琢哉, 平田圭二 / 音楽情報処理学会 第132回研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2021",
+    "type": "研究会発表",
+    "title": "暗意-実現モデルに基づく旋律情報量の予備的検討",
+    "meta": "山内拓真, 能登楓, 竹川佳成, 平田圭二 / 音楽情報処理学会 第132回研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2021",
+    "type": "紀要・研究報告",
+    "title": "高齢ピアノ学習者の演奏動画からの一考察",
+    "meta": "古庵晶子, 竹川佳成, 三上香子, 能登楓 / こども教育研究 (7), 43–58"
+  },
+  {
+    "section": "misc",
+    "year": "2021",
+    "type": "研究会発表",
+    "title": "旋律の音価，遷移，拍節構造に関するルールに基づくIR分析器実現方式の検討",
+    "meta": "能登楓, 竹川佳成, 平田圭二 / 音楽情報処理学会 第130回研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2020",
+    "type": "研究会発表",
+    "title": "マルチモーダル情報の統合により技能差に適応する楽譜追跡システム",
+    "meta": "能登楓, 竹川佳成, 平田圭二 / 音楽情報処理学会 第126回研究発表会"
+  },
+  {
+    "section": "misc",
+    "year": "2018",
+    "type": "研究会発表",
+    "title": "初学者の練習に適した楽譜追跡システム－演奏状況を把握するための新しいパラメータの導入法－",
+    "meta": "能登楓, 竹川佳成, 平田圭二 / 音楽情報科学研究会（MUS）"
+  },
+  {
+    "section": "misc",
+    "year": "2018",
+    "type": "研究会発表",
+    "title": "暗意実現モデルに基づき作曲家識別を行うHMMについて",
+    "meta": "能登楓, 竹川佳成, 平田圭二 / 音楽情報科学／音声言語情報処理 合同研究会（MUS-118 / SLP-120）"
+  },
+  {
+    "section": "misc",
+    "year": "2017",
+    "type": "研究会発表",
+    "title": "議論タイムスパン木を生成するルールの重みパラメータの妥当性評価について",
+    "meta": "三浦寛也, 牧野孝史, 能登楓, 竹川佳成, 平田圭二 / 第81回 言語・音声理解と対話処理研究会"
+  },
+  {
+    "section": "misc",
+    "year": "2015",
+    "type": "全国大会発表",
+    "title": "議論構造を利用した発言録の自動要約－議論タイムスパン木による重要発言の同定とその応用－",
+    "meta": "三浦寛也, 能登楓, 竹川佳成, 平田圭二 / 2015年度 人工知能学会全国大会（第29回）, 3N4-1"
+  }
+]
