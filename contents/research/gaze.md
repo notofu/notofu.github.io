@@ -7,6 +7,7 @@ date: 2026-08-07
 tags: 視線計測, ピアノ学習, 高齢学習者
 order: 3
 published: true
+relatedWorks: gaze, 視線取得, 高齢者, elderly
 ---
 
 ## 概要
