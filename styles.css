@@ -1878,3 +1878,52 @@ body.lightbox-open {
     font-size: .72rem;
   }
 }
+
+/* ===== Works category badges: match Projects / Grants style ===== */
+.output-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  min-height: 0;
+  padding: 5px 8px;
+  border-radius: 3px;
+  background: #5166b8 !important;
+  color: #fff;
+  font-size: .66rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Remove the old square markers. */
+.output-type::before,
+.output-type .work-kind-square {
+  display: none !important;
+  content: none !important;
+}
+
+.output-row[data-kind="journal"] .output-type {
+  background: #2c8175 !important;
+}
+.output-row[data-kind="conference"] .output-type {
+  background: #5166b8 !important;
+}
+.output-row[data-kind="presentation"] .output-type {
+  background: #d97b2e !important;
+}
+.output-row[data-kind="report"] .output-type {
+  background: #7461a8 !important;
+}
+.output-row[data-kind="other"] .output-type {
+  background: #75818a !important;
+}
+
+@media (max-width: 760px) {
+  .output-type {
+    min-height: 29px;
+    padding: 5px 8px;
+    font-size: .64rem;
+  }
+}
