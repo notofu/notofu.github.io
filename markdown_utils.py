@@ -11,7 +11,10 @@ def inline_markdown(text: str, prefix: str = "") -> str:
 
     def image_repl(match):
         alt, url = match.group(1), html.unescape(match.group(2))
-        return f'<img class="article-inline-image" src="{esc(local_url(url, prefix))}" alt="{alt}" loading="lazy" decoding="async">'
+        return (
+            f'<img class="article-inline-image" src="{esc(local_url(url, prefix))}" '
+            f'alt="{alt}" loading="lazy" decoding="async">'
+        )
 
     escaped = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', image_repl, escaped)
 
@@ -26,12 +29,14 @@ def inline_markdown(text: str, prefix: str = "") -> str:
     return escaped
 
 
-def markdown_to_html(text: str, prefix: str = "") -> str:
+def markdown_to_html_with_toc(text: str, prefix: str = "") -> tuple[str, list[tuple[str, str]]]:
     lines = text.splitlines()
     out: list[str] = []
     paragraph: list[str] = []
     list_type: str | None = None
     list_items: list[str] = []
+    toc: list[tuple[str, str]] = []
+    section_no = 0
 
     def flush_paragraph():
         nonlocal paragraph
@@ -58,7 +63,12 @@ def markdown_to_html(text: str, prefix: str = "") -> str:
         if m:
             flush_paragraph(); flush_list()
             level = len(m.group(1))
-            out.append(f'<h{level}>{inline_markdown(m.group(2), prefix)}</h{level}>')
+            section_no += 1
+            section_id = f"section-{section_no}"
+            label = re.sub(r'[`*_\[\]()]', '', m.group(2)).strip()
+            if level == 2:
+                toc.append((section_id, label))
+            out.append(f'<h{level} id="{section_id}">{inline_markdown(m.group(2), prefix)}</h{level}>')
             continue
         if stripped.startswith("> "):
             flush_paragraph(); flush_list(); out.append(f'<blockquote>{inline_markdown(stripped[2:], prefix)}</blockquote>'); continue
@@ -73,4 +83,8 @@ def markdown_to_html(text: str, prefix: str = "") -> str:
             if list_type not in {None, "ol"}: flush_list()
             list_type = "ol"; list_items.append(m.group(1)); continue
         paragraph.append(stripped)
-    return "".join(out)
+    return "".join(out), toc
+
+
+def markdown_to_html(text: str, prefix: str = "") -> str:
+    return markdown_to_html_with_toc(text, prefix)[0]

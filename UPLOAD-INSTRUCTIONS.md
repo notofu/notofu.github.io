@@ -1,83 +1,119 @@
-# GitHub 上書き手順
+# GitHubへ上書きする方法
 
-今回の更新は、見た目を大きく変えずに News・favicon・コード構造を整理するものです。
+このZIPは、現在の `notofu.github.io` に**上書きする更新セット**です。
+`content.json`、現在の記事Markdown、現在の研究画像は含めていないので、そのまま残ります。
 
-## 1. GitHubへ上書きするファイル
+## 上書き・追加するもの
 
 リポジトリ直下:
 
 - `build.py`
-- `site_common.py`（新規）
-- `markdown_utils.py`（新規）
-- `news_module.py`（新規）
-- `image_pipeline.py`（新規）
+- `home_module.py`
+- `content_module.py`
+- `works_module.py`
+- `teaching_module.py`
+- `researchmap_sync.py`
+- `seo_tools.py`
+- `site_common.py`
+- `markdown_utils.py`
+- `news_module.py`
+- `image_pipeline.py`
 - `styles.css`
 - `script.js`
-- `works.html`
+- `requirements.txt`
+- `data/researchmap_fallback.json`
 
 その他:
 
-- `assets/favicon.svg`
-- `contents/news/README.md`
-- `contents/news/_TEMPLATE.md`
-- `contents/news/2026-08-07-website-update.md`
-- `contents/news/2026-06-26-icec-2026.md`
 - `.github/workflows/pages.yml`
+- `assets/favicon.svg`
+- `assets/noto-lab-wordmark.png`
+- `contents/*/_TEMPLATE.md`
+- `contents/README.md`
 
-`content.json`、既存の `contents/research/`、`contents/graduation/`、`contents/blog/`、研究画像は上書きしません。
+## 上書きしないもの
 
-## 2. Newsを追加する方法
+- `content.json`
+- 既に書いた `contents/research/*.md`
+- 既に書いた `contents/graduation/*.md`
+- 既に書いた `contents/blog/*.md`
+- 既に書いた `contents/news/*.md`
+- 自分で追加した `assets/` の研究画像
+- Google Search Console の `google*.html`
 
-GitHubの Web UI で `contents/news/` に `.md` を1個作るだけです。
+## 今回の主な変更
 
-```md
----
-title: お知らせのタイトル
-summary: 一覧に表示する短い説明です。
-date: 2026-08-08
-published: true
----
+### 1. researchmapをビルド時取得
 
-本文を書きます。
+閲覧者のブラウザからresearchmap APIを呼ばなくなります。
+GitHub Actions実行時に以下を取得して静的HTMLへ埋め込みます。
+
+- 論文
+- MISC
+- 講演・口頭発表
+- 共同研究・競争的資金等の研究課題
+- 産業財産権
+- 学術貢献活動
+- 担当経験のある科目
+
+`.github/workflows/pages.yml` は毎週月曜にも自動実行されるため、researchmapを更新すると次回の定期ビルドでサイトにも反映されます。
+
+### 2. 画像軽量化
+
+元画像はそのまま `assets/` に置きます。
+ビルド時に `dist/assets/generated/` へ軽いWebPを自動生成します。
+
+- 320px: スマホ/一覧
+- 640px: PC/高DPI一覧
+- detail: 個別記事
+
+生成WebPをGitHubへアップロードする必要はありません。
+
+### 3. 記事追加
+
+各フォルダの `_TEMPLATE.md` をコピーして記事を作ります。
+研究記事の `relatedWorks:` にキーワードを書くと、個別ページの最後に関連業績を自動表示します。
+
+例:
+
+```yaml
+relatedWorks: ICEC, 視線
 ```
 
-公開日がビルド日から「1か月以内」の記事には赤い `NEW!` が自動表示されます。
-1か月を過ぎると、次回ビルド時に自動で消えます。
+### 4. News
 
-News一覧は `/news/`、個別記事は `/news/<ファイル名>.html` に自動生成されます。
-トップページの News は最新5件を自動表示します。
+`contents/news/*.md` がNewsです。公開日から1か月以内は赤い `NEW!` が自動表示されます。
 
-## 3. favicon
+### 5. SEO/配信
 
-`assets/favicon.svg` を追加しています。
-白背景に大きい `n`、右上に小さな赤い点のデザインです。
-トップ、Research、Teaching、News、研究業績ページで同じfaviconを使います。
+自動生成:
 
-## 4. コード整理
+- `sitemap.xml`（記事の日付を `lastmod` に反映）
+- `robots.txt`
+- `feed.xml`（News + Blog RSS）
+- 記事ごとのOGP
 
-`build.py` に集中していた処理を分離しました。
+### 6. ビルドチェック
 
-- `image_pipeline.py`: WebPサムネイル・詳細画像の自動生成
-- `news_module.py`: News Markdownの読込、NEW判定、Newsページ生成
-- `markdown_utils.py`: Markdown本文のHTML変換
-- `site_common.py`: ヘッダー、リンク、エスケープ等の共通処理
-- `build.py`: ページ構成とビルド全体の制御
+以下があるとGitHub Actionsを失敗させ、壊れたサイトの公開を防ぎます。
 
-そのため、新しいファイル4つを忘れずアップロードしてください。
+- タイトルなし
+- 記事URL重複
+- 指定画像が存在しない
+- 生成HTML内の内部リンク切れ
 
-## 5. その他の変更
+## トップページの大見出しを変える
 
-- 研究画像の枠線・影を削除
-- 赤は `NEW!` とfaviconの小さなアクセントに限定
-- `Selected Publications` → `Selected Works`
-- 卒業研究の英語ラベル `Graduation` → `Student Project`
-- `HCI` 表記を `Human–Computer Interaction` に展開
-- `Information` → `Profile Details`
-- researchmap のブランド表記を小文字に統一
-- 研究業績ページの英語小見出しを自然な表現に修正
-- Search Console の `google*.html` はルートに置けば `dist/` に自動コピー
+`content.json` の `site` に任意で以下を追加できます。
 
-## 6. Actions
+```json
+"homeHeading": "Research & Education",
+"homeKicker": "Music Information Processing · Human–Computer Interaction"
+```
 
-Commit後、`Deploy GitHub Pages` が緑になるまで待ってください。
-現在の `pages.yml` は Pillow をインストールするため、WebP自動生成もそのまま動きます。
+未指定でも動きます。
+
+## favicon
+
+タブ・画像未設定時の共通アイコンは `assets/favicon.svg` です。
+古い `noto-lab-icon.png` は新コードでは参照しません。

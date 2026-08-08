@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import html
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
+
+
+FAVICON_VERSION = "3"
 
 
 def esc(value: object) -> str:
@@ -21,7 +24,7 @@ def href(url: str, label: str, class_name: str = "") -> str:
 
 
 def shorten(text: str, limit: int = 78) -> str:
-    text = text.strip()
+    text = (text or "").strip()
     if len(text) <= limit:
         return text
     return text[: limit - 1].rstrip("、。 ,") + "…"
@@ -33,20 +36,49 @@ def local_url(url: str, prefix: str = "") -> str:
     return prefix + url
 
 
+def favicon_links(prefix: str = "") -> str:
+    return (
+        f'<link rel="icon" href="{prefix}assets/favicon.svg?v={FAVICON_VERSION}" type="image/svg+xml">\n'
+        f'<link rel="shortcut icon" href="{prefix}assets/favicon.svg?v={FAVICON_VERSION}">'
+    )
+
+
+def og_meta(site: dict, title: str, description: str, canonical: str,
+            image: str | None = None, og_type: str = "website") -> str:
+    image_url = image or site.get("ogImage", "assets/og-image.png")
+    if image_url and not is_external(image_url):
+        image_url = urljoin(site["url"], image_url)
+    return f'''<meta property="og:type" content="{esc(og_type)}">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="{esc(title)}">
+<meta property="og:description" content="{esc(description)}">
+<meta property="og:url" content="{esc(canonical)}">
+<meta property="og:image" content="{esc(image_url)}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{esc(title)}">
+<meta name="twitter:description" content="{esc(description)}">
+<meta name="twitter:image" content="{esc(image_url)}">'''
+
+
 def header(profile: dict, prefix: str = "", active: str = "home") -> str:
     links = [
         ("home", f"{prefix}index.html", "Home"),
         ("research", f"{prefix}research/index.html", "Research"),
-        ("publications", f"{prefix}works.html", "Publications"),
+        ("works", f"{prefix}works.html", "Works"),
         ("teaching", f"{prefix}teaching.html", "Teaching"),
         ("profile", f"{prefix}index.html#profile", "Profile"),
         ("contact", f"{prefix}index.html#contact", "Contact"),
     ]
     nav = "".join(
-        f'<a href="{u}" class="{"is-active" if key == active else ""}">{label}</a>'
+        f'<a href="{u}" class="{"is-active" if key == active else ""}"'
+        f'{" aria-current=\"page\"" if key == active else ""}>{label}</a>'
         for key, u, label in links
     )
-    mobile = "".join(f'<a href="{u}">{label}</a>' for _, u, label in links)
+    mobile = "".join(
+        f'<a href="{u}" class="{"is-active" if key == active else ""}"'
+        f'{" aria-current=\"page\"" if key == active else ""}>{label}</a>'
+        for key, u, label in links
+    )
     return f'''<header class="site-header" id="top">
   <div class="container header-inner">
     <a class="brand" href="{prefix}index.html" aria-label="noto Lab ホーム">
