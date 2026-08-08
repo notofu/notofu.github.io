@@ -64,7 +64,7 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
     links = [
         ("home", f"{prefix}index.html", "Home"),
         ("research", f"{prefix}research/index.html", "Research"),
-        ("works", f"{prefix}works.html", "Works"),
+        ("works", f"{prefix}works.html", "Publications"),
         ("teaching", f"{prefix}teaching.html", "Teaching"),
         ("profile", f"{prefix}index.html#profile", "Profile"),
         ("contact", f"{prefix}index.html#contact", "Contact"),

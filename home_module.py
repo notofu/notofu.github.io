@@ -173,20 +173,18 @@ def _blog_preview(items: list[dict], limit: int = 3) -> str:
 
 
 def _hero_visual(items: list[dict]) -> str:
-    tiles = []
-    for i, item in enumerate(items[:4]):
-        image = item.get("thumbnailLarge") or item.get("thumbnail") or item.get("image") or "assets/favicon.svg"
-        image = local_url(image)
-        url = local_url(item.get("url", ""))
-        fallback = " is-fallback" if item.get("_imageFallback") else ""
-        tiles.append(
-            f'<a class="home-hero-tile home-hero-tile--{i + 1}{fallback}" href="{esc(url)}" aria-label="{esc(item.get("title", ""))}の詳細を見る">'
-            f'<img src="{esc(image)}" alt="" loading="eager" decoding="async">'
-            '</a>'
-        )
-    if not tiles:
+    # Heroでは複数画像を組み合わせず、既存の研究画像を1枚だけ静かに見せる。
+    if not items:
         return '<div class="home-hero-placeholder" aria-hidden="true"><img src="assets/favicon.svg" alt=""></div>'
-    return '<div class="home-hero-mosaic" aria-label="研究テーマのイメージ">' + "".join(tiles) + '</div>'
+    item = next((x for x in items if not x.get("_imageFallback")), items[0])
+    image = item.get("thumbnailLarge") or item.get("thumbnail") or item.get("image") or "assets/favicon.svg"
+    image = local_url(image)
+    fallback = " is-fallback" if item.get("_imageFallback") else ""
+    return (
+        f'<figure class="home-hero-single{fallback}">'
+        f'<img src="{esc(image)}" alt="{esc(item.get("imageAlt", ""))}" loading="eager" decoding="async">'
+        '</figure>'
+    )
 
 
 def _history(items: list[dict]) -> str:
@@ -227,32 +225,30 @@ def build_home(data: dict, content_items: list[dict], news_items: list[dict], al
     ]
     fact_html = "".join(f'<div class="fact-row"><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>' for k, v in facts)
 
-    # 既存コンテンツだけを使う。新しいキャッチコピーや新規画像は追加しない。
-    home_heading = p.get("pageHeading") or site.get("homeHeading") or f'{p["nameJa"].replace(" ", "")}のWebページ'
-    home_kicker = site.get("homeKicker", "Music Information Processing · Human–Computer Interaction")
+    # 既存コンテンツだけを再配置する。新しい素材・説明文は追加しない。
+    home_heading = site.get("homeTagline") or "音楽と人の振る舞いを研究する"
     desc = site["description"]
-    keywords = "".join(f'<span>{esc(x)}</span>' for x in p.get("keywords", [])[:5])
 
     return f'''<!doctype html><html lang="{esc(site.get("language", "ja"))}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(site["title"])}</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(site["url"])}">{favicon_links()}
-{og_meta(site, site["title"], desc, site["url"])}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="feed.xml"><link rel="stylesheet" href="styles.css"><script src="script.js" defer></script><script type="application/ld+json">{_json_ld(data)}</script></head><body class="home-page">
+{og_meta(site, site["title"], desc, site["url"])}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="feed.xml"><link rel="stylesheet" href="styles.css?v=20260808c"><script src="script.js?v=20260808c" defer></script><script type="application/ld+json">{_json_ld(data)}</script></head><body class="home-page">
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="home")}<main id="main">
 
 <section class="home-hero" id="overview"><div class="container home-hero-grid">
-  <div class="home-hero-copy"><p class="eyebrow">{esc(home_kicker)}</p><h1>{esc(home_heading)}</h1><p class="home-hero-summary">{esc(p.get("summary", ""))}</p><div class="home-keywords">{keywords}</div><div class="home-hero-actions"><a href="research/index.html">研究テーマを見る <span aria-hidden="true">→</span></a><a href="works.html">研究業績を見る <span aria-hidden="true">→</span></a></div></div>
+  <div class="home-hero-copy"><h1>{esc(home_heading)}</h1><p class="home-hero-summary">{esc(p.get("summary", ""))}</p></div>
   <div class="home-hero-visual">{_hero_visual(research_items)}</div>
 </div></section>
 
-<section class="home-dashboard" aria-label="研究・お知らせ・業績"><div class="container home-dashboard-grid">
-  <section class="home-panel home-panel--research" id="research"><div class="home-panel-head"><h2>研究テーマ</h2><a href="research/index.html">すべて見る →</a></div><div class="home-research-list">{_research_rows(research_items, 3)}</div></section>
-  <section class="home-panel home-panel--news" id="news"><div class="home-panel-head"><h2>お知らせ</h2><a href="news/index.html">すべて見る →</a></div><div class="home-news-list">{_news_rows(news_items, 5)}</div></section>
-  <section class="home-panel home-panel--works" id="works"><div class="home-panel-head"><h2>注目の業績</h2><a href="works.html">すべて見る →</a></div><div class="home-work-list">{_selected_works(all_works, 3)}</div></section>
+<section class="home-dashboard" aria-label="Research Themes, News, Publications"><div class="container home-dashboard-grid">
+  <section class="home-panel home-panel--research" id="research"><div class="home-panel-head"><h2>Research Themes</h2><a href="research/index.html">View all →</a></div><div class="home-research-list">{_research_rows(research_items, 3)}</div></section>
+  <section class="home-panel home-panel--news" id="news"><div class="home-panel-head"><h2>News</h2><a href="news/index.html">View all →</a></div><div class="home-news-list">{_news_rows(news_items, 5)}</div></section>
+  <section class="home-panel home-panel--works" id="works"><div class="home-panel-head"><h2>Publications</h2><a href="works.html">View all →</a></div><div class="home-work-list">{_selected_works(all_works, 3)}</div></section>
 </div></section>
 
 <section class="home-quicklinks"><div class="container home-quicklinks-grid">
-  <section class="home-quick-card"><div><span class="home-quick-kicker">Teaching</span><h2>担当授業</h2><ul class="home-mini-list">{_teaching_preview(teaching_rows, 3)}</ul></div><a class="home-quick-arrow" href="teaching.html" aria-label="担当授業をすべて見る">→</a></section>
-  <section class="home-quick-card"><div><span class="home-quick-kicker">Blog</span><h2>Blog</h2><ul class="home-blog-list">{_blog_preview(blog_items, 3)}</ul></div><a class="home-quick-arrow" href="research/index.html#blog" aria-label="Blog一覧を見る">→</a></section>
-  <section class="home-quick-card"><div><span class="home-quick-kicker">Contact / Access</span><h2>お問い合わせ・所在地</h2><p>{esc(contact.get("displayEmail", ""))}</p><p>{esc(contact.get("institution", ""))}<br>{esc(contact.get("address", ""))}</p></div><a class="home-quick-arrow" href="#contact" aria-label="お問い合わせを見る">→</a></section>
+  <section class="home-quick-card"><div><h2>Teaching</h2><ul class="home-mini-list home-mini-list--compact">{_teaching_preview(teaching_rows, 2)}</ul></div><a class="home-quick-arrow" href="teaching.html" aria-label="Teachingを見る">→</a></section>
+  <section class="home-quick-card"><div><h2>Blog</h2><ul class="home-blog-list home-blog-list--compact">{_blog_preview(blog_items, 2)}</ul></div><a class="home-quick-arrow" href="research/index.html#blog" aria-label="Blogを見る">→</a></section>
+  <section class="home-quick-card"><div><h2>Contact / Access</h2><p>{esc(contact.get("displayEmail", ""))}</p><p class="home-contact-place">{esc(contact.get("address", ""))}</p></div><a class="home-quick-arrow" href="#contact" aria-label="Contact / Accessを見る">→</a></section>
 </div></section>
 
 <section class="profile-section" id="profile"><div class="container profile-identity"><div class="profile-identity-main">{profile_image}<div><p class="eyebrow">Profile</p><h2>{esc(p["nameJa"])} <span>{esc(p["nameEn"])}</span></h2><p class="profile-affiliation">{esc(p["affiliation"])}　{esc(p["position"])}</p><div class="profile-links">{external_links}</div></div></div></div><div class="container profile-section-grid"><div><h3>Profile Details</h3><dl class="fact-list">{fact_html}</dl></div><div><h3>Career</h3><div>{_history(p.get("history", []))}</div></div></div></section>
