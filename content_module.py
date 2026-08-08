@@ -197,18 +197,37 @@ def related_works(item: dict, works: list[dict], limit: int = 4) -> list[dict]:
     return [x[1] for x in scored[:limit]]
 
 
+def _related_work_kind(type_text: str) -> tuple[str, str]:
+    """Worksページと同じ分類名・色に揃える。"""
+    t = str(type_text or "")
+    low = t.lower()
+    if t == "paper" or "査読" in t or ("論文" in t and "国際" not in t):
+        return "journal", "論文"
+    if "conference" in low or "国際会議" in t:
+        return "conference", "国際会議"
+    if t == "presentation" or "発表" in t or "研究会" in t:
+        return "presentation", "発表"
+    if t == "misc" or "misc" in low:
+        return "report", "MISC"
+    return "other", t or "業績"
+
+
 def _related_html(rows: list[dict]) -> str:
     if not rows:
         return ""
     items = []
     for row in rows:
+        kind, label = _related_work_kind(row.get("type", ""))
         title = esc(row.get("title", ""))
         if row.get("url"):
             title = f'<a href="{esc(row["url"])}" target="_blank" rel="noopener noreferrer">{title}</a>'
+        meta = " / ".join(x for x in [row.get("authors", ""), row.get("venue", "")] if x)
         items.append(
-            '<article class="related-work">'
-            f'<span>{esc(row.get("year", ""))}</span><div><h3>{title}</h3>'
-            f'<p>{esc(row.get("venue", ""))}</p></div></article>'
+            f'<article class="related-work" data-kind="{esc(kind)}">'
+            f'<div class="related-work-year">{esc(row.get("year", ""))}</div>'
+            f'<div class="output-type">{esc(label)}</div>'
+            f'<div class="related-work-content"><h3>{title}</h3><p>{esc(meta)}</p></div>'
+            '</article>'
         )
     return '<section class="article-related"><h2>関連する研究業績</h2>' + ''.join(items) + '</section>'
 

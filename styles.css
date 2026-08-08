@@ -1927,3 +1927,81 @@ body.lightbox-open {
     font-size: .64rem;
   }
 }
+
+/* ===== Related works: use the same colored type badges as Works ===== */
+.related-work {
+  grid-template-columns: 58px 92px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+.related-work-year {
+  color: var(--teal-dark);
+  font-size: .78rem;
+  font-weight: 750;
+  padding-top: 5px;
+}
+.related-work .output-type {
+  margin: 0;
+}
+.related-work[data-kind="journal"] .output-type {
+  background: #2c8175 !important;
+}
+.related-work[data-kind="conference"] .output-type {
+  background: #5166b8 !important;
+}
+.related-work[data-kind="presentation"] .output-type {
+  background: #d97b2e !important;
+}
+.related-work[data-kind="report"] .output-type {
+  background: #7461a8 !important;
+}
+.related-work[data-kind="other"] .output-type {
+  background: #75818a !important;
+}
+.related-work-content h3 {
+  margin: 0;
+  font-size: .92rem;
+  line-height: 1.55;
+}
+.related-work-content h3 a {
+  color: var(--navy);
+  text-decoration: none;
+}
+.related-work-content h3 a:hover {
+  color: var(--teal-dark);
+}
+.related-work-content p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+@media (max-width: 760px) {
+  .related-work {
+    grid-template-columns: 44px 78px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .related-work-year {
+    font-size: .72rem;
+  }
+  .related-work .output-type {
+    min-height: 29px;
+    padding: 5px 7px;
+    font-size: .61rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-work {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 8px 10px;
+  }
+  .related-work .output-type {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .related-work-content {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
