@@ -1,22 +1,25 @@
-# 関連する研究業績：分類バッジ表示アップデート
+# GitHubアップロード手順
 
-GitHubリポジトリ直下の次の2ファイルを上書きしてください。
+今回、リポジトリ直下で上書きするのは次の4ファイルです。
 
-- `content_module.py`
+- `build.py`
+- `home_module.py`
+- `site_common.py`
 - `styles.css`
 
-`content.json`、`contents/`、画像、その他のPythonファイルは変更不要です。
+`content.json`、`contents/`、`assets/`、`script.js`、その他の記事ファイルは変更しないでください。
 
 ## 変更内容
 
-研究テーマ・卒業研究・Blogの個別ページ下部に表示される「関連する研究業績」を、Worksページと同じ分類表示に統一しました。
+- 大きな標語・Hero画像を削除
+- 既存のプロフィール概要だけをトップ上部に小さく表示
+- `Research Themes / News / Publications` を横3列で維持
+- noteに近い低彩度・細い罫線・小さめの文字・影なしのUIへ変更
+- Research Themesの一覧は、文章左・小さなサムネイル右のnote風レイアウト
+- `Teaching / Blog / Contact` は高さ約50pxのナビゲーションに縮小
+- Contactを独立した `contact.html` として自動生成
+- 既存の問い合わせ先・所在地・メールフォームをContactページで再利用
+- `noto Lab` の下の `能登研究室` は維持
+- CSS/JSキャッシュ対策としてトップ・Contactで `?v=20260808d` を使用
 
-- 論文：緑
-- 国際会議：青
-- 発表：オレンジ
-- MISC：紫
-- その他：グレー
-
-表示は `年 / 分類バッジ / 業績タイトル` の3列を基本とし、スマートフォンでは狭い画面に合わせて自動的に組み替わります。
-
-直前に追加した画像ライトボックス機能、およびWorksページのバッジ修正も維持しています。
+GitHub Actionsが緑になったら公開完了です。

@@ -67,7 +67,7 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
         ("works", f"{prefix}works.html", "Publications"),
         ("teaching", f"{prefix}teaching.html", "Teaching"),
         ("profile", f"{prefix}index.html#profile", "Profile"),
-        ("contact", f"{prefix}index.html#contact", "Contact"),
+        ("contact", f"{prefix}contact.html", "Contact"),
     ]
     nav = "".join(
         f'<a href="{u}" class="{"is-active" if key == active else ""}"'

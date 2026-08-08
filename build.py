@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 from content_module import CONTENT_CATEGORIES, build_content_detail, build_research_index, load_content_items
-from home_module import build_home
+from home_module import build_contact_page, build_home
 from image_pipeline import prepare_content_images, prepare_profile_image
 from news_module import build_news_detail, build_news_index, legacy_news_items, load_news
 from researchmap_sync import normalized_misc_and_presentations, normalized_publications, sync_researchmap
@@ -64,6 +64,7 @@ def main() -> None:
     (DIST / "index.html").write_text(build_home(data, content_items, news_items, all_works, teaching_rows), encoding="utf-8")
     (DIST / "works.html").write_text(works_html, encoding="utf-8")
     (DIST / "teaching.html").write_text(teaching_html, encoding="utf-8")
+    (DIST / "contact.html").write_text(build_contact_page(data), encoding="utf-8")
 
     (DIST / "research").mkdir(exist_ok=True)
     (DIST / "research" / "index.html").write_text(build_research_index(data, content_items), encoding="utf-8")
@@ -89,6 +90,7 @@ def main() -> None:
         {"url": site_url, "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "works.html"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "teaching.html"), "lastmod": date.today().isoformat()},
+        {"url": urljoin(site_url, "contact.html"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "research/"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "news/"), "lastmod": news_items[0].get("date") if news_items else date.today().isoformat()},
     ]
