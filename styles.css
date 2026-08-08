@@ -2911,3 +2911,71 @@ body .mobile-nav { display: none !important; }
   .home-page .home-work-item time,
   .home-page .home-panel--works .home-work-item time { display: none; }
 }
+
+/* ========================================================================== 
+   2026-08-08h — three distinct editorial panels on the home page
+   ========================================================================== */
+
+/* Keep the quiet note-like page background, but separate each major area. */
+.home-page .home-dashboard {
+  padding: 30px 0 34px;
+  background: var(--note-bg);
+  border-top: 1px solid var(--note-line);
+  border-bottom: 1px solid var(--note-line);
+}
+
+.home-page .home-dashboard-grid {
+  width: min(calc(100% - 56px), 1080px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  overflow: visible;
+  background: transparent;
+}
+
+.home-page .home-panel,
+.home-page .home-panel:last-child,
+.home-page .home-panel--works {
+  padding: 24px 28px 26px;
+  border: 1px solid var(--note-line-strong);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: none;
+}
+
+.home-page .home-panel:last-child { border-bottom: 1px solid var(--note-line-strong); }
+.home-page .home-panel-head { margin-bottom: 12px; }
+
+/* The outer panel is the visual separator; row rules stay deliberately faint. */
+.home-page .home-research-list,
+.home-page .home-news-list,
+.home-page .home-work-list,
+.home-page .home-panel--works .home-work-list {
+  border-top-color: #ececea;
+}
+.home-page .home-research-item,
+.home-page .home-news-item,
+.home-page .home-work-item,
+.home-page .home-panel--works .home-work-item {
+  border-bottom-color: #ececea;
+}
+
+@media (max-width: 760px) {
+  .home-page .home-dashboard { padding: 22px 0 26px; }
+  .home-page .home-dashboard-grid {
+    width: min(calc(100% - 30px), 1080px);
+    gap: 14px;
+  }
+  .home-page .home-panel,
+  .home-page .home-panel--works {
+    padding: 20px 18px 22px;
+    border-radius: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page .home-dashboard-grid { width: min(calc(100% - 22px), 1080px); }
+  .home-page .home-panel,
+  .home-page .home-panel--works { padding: 18px 15px 20px; }
+}

@@ -1,10 +1,9 @@
-# Upload instructions
+# アップロード手順
 
-GitHub リポジトリ `notofu/notofu.github.io` のルートで、以下の7ファイルを同名ファイルへ上書きしてください。
+GitHub リポジトリ `notofu/notofu.github.io` のルートに、以下の6ファイルをそのまま上書きしてください。
 
-- `home_module.py`
-- `site_common.py`
 - `styles.css`
+- `home_module.py`
 - `content_module.py`
 - `news_module.py`
 - `teaching_module.py`
@@ -14,12 +13,14 @@ GitHub リポジトリ `notofu/notofu.github.io` のルートで、以下の7フ
 
 ## 今回の変更
 
-- トップページを `Research Themes → News → Publications` の縦並びへ変更
-- 各セクションを横幅いっぱいのnote風リストへ変更
-- トップページの「ページ上部へ戻る」を削除
-- ヘッダーを全ページで同じデザインに統一
-- ハンバーガーメニュー（三本線）と重複モバイルメニューを削除
-- スマホでは同じナビを横スクロール表示
-- CSS/JS の参照を `?v=20260808g` に統一し、古いCSSキャッシュを回避
+トップページの `Research Themes / News / Publications` を、薄い背景の上に独立した白いパネルとして縦3枚に分けました。
 
-アップロード後、GitHub Actions の `Deploy GitHub Pages` が緑になれば完了です。
+- 各パネルに細いグレーの縁取り
+- 影なし
+- 角丸は控えめ
+- 3パネルの間に18pxの空白
+- 左右は従来より少し内側（最大幅1080px）
+- パネル内部の項目区切り線は薄く残す
+- モバイルでは余白だけ少し縮小
+
+CSSキャッシュ対策として各ページのバージョンを `20260808h` に更新しています。
