@@ -7,6 +7,7 @@ date: 2026-08-07
 tags: 旋律分析, 音楽認知, 構造分析
 order: 1
 published: true
+relatedWorks: BOUNDARY DETECTION, 繰返しパターン探索, Implication-Realization Model
 ---
 
 ## 概要
