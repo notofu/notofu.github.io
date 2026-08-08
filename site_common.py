@@ -83,6 +83,7 @@ def header(profile: dict, prefix: str = "", active: str = "home") -> str:
   <div class="container header-inner">
     <a class="brand" href="{prefix}index.html" aria-label="noto Lab ホーム">
       <img class="brand-logo" src="{prefix}assets/noto-lab-wordmark.png" alt="noto Lab" width="141" height="30">
+      <span class="brand-jp">能登研究室</span>
     </a>
     <nav class="desktop-nav" aria-label="主要メニュー">{nav}</nav>
     <button class="menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
