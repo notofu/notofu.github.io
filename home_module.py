@@ -151,8 +151,8 @@ def build_home(data: dict, content_items: list[dict], news_items: list[dict], al
 
     profile_src = p.get("_optimizedImage") or p.get("image")
     profile_image = (
-        f'<img class="profile-photo" src="{esc(profile_src)}" alt="{esc(p.get("imageAlt", p["nameJa"]))}" width="112" height="112" loading="lazy" decoding="async">'
-        if profile_src else ""
+        f'<img class="home-profile-photo" src="{esc(profile_src)}" alt="{esc(p.get("imageAlt", p["nameJa"]))}" width="82" height="82" loading="eager" decoding="async">'
+        if profile_src else '<span class="home-profile-photo home-profile-photo--empty" aria-hidden="true"></span>'
     )
     external_links = "".join(
         href(
@@ -172,29 +172,43 @@ def build_home(data: dict, content_items: list[dict], news_items: list[dict], al
 
     return f'''<!doctype html><html lang="{esc(site.get("language", "ja"))}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(site["title"])}</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(site["url"])}">{favicon_links()}
-{og_meta(site, site["title"], desc, site["url"])}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="feed.xml"><link rel="stylesheet" href="styles.css?v=20260808e"><script src="script.js?v=20260808e" defer></script><script type="application/ld+json">{_json_ld(data)}</script></head><body class="home-page">
+{og_meta(site, site["title"], desc, site["url"])}<link rel="alternate" type="application/rss+xml" title="noto Lab Feed" href="feed.xml"><link rel="stylesheet" href="styles.css?v=20260808f"><script src="script.js?v=20260808f" defer></script><script type="application/ld+json">{_json_ld(data)}</script></head><body class="home-page">
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, active="home")}<main id="main">
 
-<section class="home-intro"><div class="container"><p>{esc(p.get("summary", ""))}</p></div></section>
+<section class="home-intro"><div class="container">
+  <div class="home-intro-grid">
+    <div class="home-intro-copy"><p>{esc(p.get("summary", ""))}</p></div>
+    <aside class="home-profile-brief" id="profile" aria-label="Profile">
+      <button class="home-profile-photo-button" type="button" data-profile-toggle aria-expanded="false" aria-controls="home-profile-details" aria-label="プロフィール詳細と経歴を表示">
+        {profile_image}<span class="home-profile-photo-mark" aria-hidden="true" data-profile-toggle-mark>＋</span>
+      </button>
+      <div class="home-profile-brief-copy">
+        <p class="home-profile-label">Profile</p>
+        <h1>{esc(p["nameJa"])} <span>{esc(p["nameEn"])}</span></h1>
+        <p>{esc(p["affiliation"])}　{esc(p["position"])}</p>
+        <div class="home-profile-links">{external_links}</div>
+      </div>
+    </aside>
+  </div>
+  <div class="home-profile-details" id="home-profile-details" data-profile-details hidden>
+    <section><h2>Profile Details</h2><dl class="fact-list">{fact_html}</dl></section>
+    <section><h2>Career</h2><div class="home-profile-career">{_history(p.get("history", []))}</div></section>
+  </div>
+</div></section>
 
 <section class="home-dashboard" aria-label="Research Themes, News, Publications"><div class="container home-dashboard-grid">
-  <section class="home-panel home-panel--research" id="research"><div class="home-panel-head"><h2>Research Themes</h2><a href="research/index.html">View all</a></div><div class="home-research-list">{_research_rows(research_items, 3)}</div></section>
-  <section class="home-panel home-panel--news" id="news"><div class="home-panel-head"><h2>News</h2><a href="news/index.html">View all</a></div><div class="home-news-list">{_news_rows(news_items, 5)}</div></section>
-  <section class="home-panel home-panel--works" id="works"><div class="home-panel-head"><h2>Publications</h2><a href="works.html">View all</a></div><div class="home-work-list">{_selected_works(all_works, 3)}</div></section>
+  <section class="home-panel home-panel--research" id="research"><div class="home-panel-head"><div class="home-panel-title"><img class="home-section-icon" src="assets/icons/research.svg" alt="" aria-hidden="true"><h2>Research Themes</h2></div><a href="research/index.html">View all</a></div><div class="home-research-list">{_research_rows(research_items, 3)}</div></section>
+  <section class="home-panel home-panel--news" id="news"><div class="home-panel-head"><div class="home-panel-title"><img class="home-section-icon" src="assets/icons/news.svg" alt="" aria-hidden="true"><h2>News</h2></div><a href="news/index.html">View all</a></div><div class="home-news-list">{_news_rows(news_items, 5)}</div></section>
+  <section class="home-panel home-panel--works" id="works"><div class="home-panel-head"><div class="home-panel-title"><img class="home-section-icon" src="assets/icons/publications.svg" alt="" aria-hidden="true"><h2>Publications</h2></div><a href="works.html">View all</a></div><div class="home-work-list">{_selected_works(all_works, 3)}</div></section>
 </div></section>
 
 <nav class="home-utility-nav" aria-label="その他のページ"><div class="container home-utility-grid">
-  <a href="teaching.html"><span>Teaching</span><span aria-hidden="true">→</span></a>
-  <a href="research/index.html#blog"><span>Blog</span><span aria-hidden="true">→</span></a>
-  <a href="contact.html"><span>Contact</span><span aria-hidden="true">→</span></a>
+  <a href="teaching.html"><img class="home-utility-icon" src="assets/icons/teaching.svg" alt="" aria-hidden="true"><span>Teaching</span><span aria-hidden="true">→</span></a>
+  <a href="research/index.html#blog"><img class="home-utility-icon" src="assets/icons/blog.svg" alt="" aria-hidden="true"><span>Blog</span><span aria-hidden="true">→</span></a>
+  <a href="contact.html"><img class="home-utility-icon" src="assets/icons/contact.svg" alt="" aria-hidden="true"><span>Contact</span><span aria-hidden="true">→</span></a>
 </div></nav>
 
-<section class="profile-section" id="profile"><div class="container profile-compact">
-  <div class="profile-section-grid"><div><h3>Profile Details</h3><dl class="fact-list">{fact_html}</dl></div><div><h3>Career</h3><div>{_history(p.get("history", []))}</div></div></div>
-  <div class="profile-identity"><div class="profile-identity-main">{profile_image}<div><p class="eyebrow">Profile</p><h2>{esc(p["nameJa"])} <span>{esc(p["nameEn"])}</span></h2><p class="profile-affiliation">{esc(p["affiliation"])}　{esc(p["position"])}</p><div class="profile-links">{external_links}</div></div></div></div>
-</div></section>
 </main><footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
-
 
 def build_contact_page(data: dict) -> str:
     site, p = data["site"], data["profile"]

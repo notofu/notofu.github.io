@@ -130,6 +130,19 @@
     });
   }
 
+  // Compact home profile disclosure: clicking the portrait reveals details and career.
+  const profileToggle = document.querySelector('[data-profile-toggle]');
+  const profileDetails = document.querySelector('[data-profile-details]');
+  const profileToggleMark = document.querySelector('[data-profile-toggle-mark]');
+  profileToggle?.addEventListener('click', () => {
+    if (!profileDetails) return;
+    const open = profileToggle.getAttribute('aria-expanded') === 'true';
+    profileToggle.setAttribute('aria-expanded', String(!open));
+    profileToggle.setAttribute('aria-label', open ? 'プロフィール詳細と経歴を表示' : 'プロフィール詳細と経歴を閉じる');
+    profileDetails.hidden = open;
+    if (profileToggleMark) profileToggleMark.textContent = open ? '＋' : '−';
+  });
+
   const contactForm = document.querySelector('[data-contact-form]');
   contactForm?.addEventListener('submit', (event) => {
     event.preventDefault();
