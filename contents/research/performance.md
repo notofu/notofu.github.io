@@ -7,6 +7,7 @@ date: 2026-08-07
 tags: 演奏データ, 機械学習, 個人性
 order: 2
 published: true
+relatedWorks: 演奏者識別, kuramoto, Pianist Identification
 ---
 
 ## 概要
