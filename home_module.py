@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from datetime import date
+from datetime import datetime, timezone
 from urllib.parse import urljoin
 
 from site_common import esc, favicon_links, header, href, local_url, og_meta, section_icon, shorten
@@ -58,7 +58,7 @@ def _json_ld(data: dict) -> str:
                 "url": site["url"],
                 "name": site["title"],
                 "description": site["description"],
-                "dateModified": date.today().isoformat(),
+                "dateModified": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
                 "mainEntity": person,
             },
         ],
@@ -202,14 +202,14 @@ def build_home(data: dict, content_items: list[dict], news_items: list[dict], al
 </div></section>
 
 <section class="home-dashboard" aria-label="Research Themes, News, Publications"><div class="container home-dashboard-grid">
-  <section class="home-panel home-panel--research" id="research"><div class="home-panel-head"><a class="home-panel-title home-panel-title-link" href="research/index.html">{_icon("research")}<h2>Research Themes</h2></a><a href="research/index.html">View all</a></div><div class="home-research-list">{_research_rows(research_items, 3)}</div></section>
+  <section class="home-panel home-panel--research" id="research"><div class="home-panel-head"><a class="home-panel-title home-panel-title-link" href="research.html">{_icon("research")}<h2>Research Themes</h2></a><a href="research.html">View all</a></div><div class="home-research-list">{_research_rows(research_items, 3)}</div></section>
   <section class="home-panel home-panel--news" id="news"><div class="home-panel-head"><a class="home-panel-title home-panel-title-link" href="news/index.html">{_icon("news")}<h2>News</h2></a><a href="news/index.html">View all</a></div><div class="home-news-list">{_news_rows(news_items, 5)}</div></section>
   <section class="home-panel home-panel--works" id="works"><div class="home-panel-head"><a class="home-panel-title home-panel-title-link" href="publications.html">{_icon("publications")}<h2>Publications</h2></a><a href="publications.html">View all</a></div><div class="home-work-list">{_selected_works(all_works, 3)}</div></section>
 </div></section>
 
 <nav class="home-utility-nav" aria-label="その他のページ"><div class="container home-utility-grid">
   <a href="teaching.html">{_icon("teaching", True)}<span>Teaching</span><span aria-hidden="true">→</span></a>
-  <a href="research/index.html#blog">{_icon("blog", True)}<span>Blog</span><span aria-hidden="true">→</span></a>
+  <a href="research.html#blog">{_icon("blog", True)}<span>Blog</span><span aria-hidden="true">→</span></a>
   <a href="contact.html">{_icon("contact", True)}<span>Contact</span><span aria-hidden="true">→</span></a>
 </div></nav>
 

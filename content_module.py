@@ -277,26 +277,26 @@ def build_content_detail(data: dict, item: dict, all_works: list[dict]) -> str:
 <link rel="stylesheet" href="../styles.css?v=20260808m"><script src="../script.js?v=20260808i" defer></script></head><body>
 <a class="skip-link" href="#main">本文へ移動</a>{header(p, prefix="../", active="research")}
 <main id="main"><article class="article-page"><div class="container article-container">
-<p class="breadcrumb"><a href="../index.html">Home</a> / <a href="../research/index.html">Research</a> / {esc(item["categoryLabel"])}</p>
+<p class="breadcrumb"><a href="../index.html">Home</a> / <a href="../research.html">Research</a> / {esc(item["categoryLabel"])}</p>
 <div class="article-meta-row">{render_category_badge(item)}{date_html}</div><h1>{esc(item["title"])}</h1>
 <p class="article-lead">{esc(item.get("summary", ""))}</p>
 <div class="article-hero-image{fallback_class}"><img class="article-detail-image{zoom_class}" src="{esc(image)}" alt="{esc(item["imageAlt"])}" decoding="async"{zoom_attrs}></div>
 <div class="article-tags">{tags}</div>{toc_html}<div class="article-body">{body}</div>{rel}
-<div class="article-back"><a href="../research/index.html">← 一覧へ戻る</a></div></div></article></main>
+<div class="article-back"><a href="../research.html">← 一覧へ戻る</a></div></div></article></main>
 <footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''
 
 
 def build_research_index(data: dict, content_items: list[dict]) -> str:
     site, p = data["site"], data["profile"]
-    canonical = urljoin(site["url"], "research/")
+    canonical = urljoin(site["url"], "research.html")
     groups = {category: [x for x in content_items if x["category"] == category] for category in CONTENT_CATEGORIES}
-    rows = ''.join(render_content_row(category, groups[category]) for category in ("research", "graduation", "blog"))
+    rows = ''.join(render_content_row(category, groups[category], prefix="") for category in ("research", "graduation", "blog"))
     desc = "研究テーマ、卒業研究、Blogの記事一覧です。"
     return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Research | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links("../")}
-{og_meta(site, "Research | noto Lab", desc, canonical)}<link rel="stylesheet" href="../styles.css?v=20260808m"><script src="../script.js?v=20260808i" defer></script></head><body>
-<a class="skip-link" href="#main">本文へ移動</a>{header(p, prefix="../", active="research")}
-<main id="main"><section class="works-hero content-hub-hero"><div class="container"><a class="back-link" href="../index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1 class="page-heading-with-icon">{section_icon("research")}<span>Research</span></h1><p>研究テーマ、卒業研究、Blogをまとめています。気になる項目から詳細をご覧ください。</p>
+<title>Research | noto Lab</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"><link rel="canonical" href="{esc(canonical)}">{favicon_links()}
+{og_meta(site, "Research | noto Lab", desc, canonical)}<link rel="stylesheet" href="styles.css?v=20260808m"><script src="script.js?v=20260808i" defer></script></head><body>
+<a class="skip-link" href="#main">本文へ移動</a>{header(p, active="research")}
+<main id="main"><section class="works-hero content-hub-hero"><div class="container"><a class="back-link" href="index.html">← トップページへ戻る</a><p class="eyebrow">noto Lab</p><h1 class="page-heading-with-icon">{section_icon("research")}<span>Research</span></h1><p>研究テーマ、卒業研究、Blogをまとめています。気になる項目から詳細をご覧ください。</p>
 <nav class="content-filter-nav" aria-label="コンテンツカテゴリ"><a href="#research">研究テーマ <span>{len(groups['research'])}</span></a><a href="#graduation">卒業研究 <span>{len(groups['graduation'])}</span></a><a href="#blog">Blog <span>{len(groups['blog'])}</span></a></nav></div></section>
 <section class="content-hub"><div class="container">{rows}</div></section></main>
 <footer class="site-footer"><div class="container footer-inner"><p>© <span data-current-year></span> {esc(p["nameEn"])}</p><a href="#top">ページ上部へ戻る ↑</a></div></footer></body></html>'''

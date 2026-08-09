@@ -1,9 +1,7 @@
 # Changes
 
-- ヘッダー背景を濃い青灰色 `#26343a` に固定
-- noto Lab ロゴを白反転
-- 「能登研究室」を明るいグレーに反転
-- ナビ文字を白系に統一
-- 選択中の下線のみ落ち着いた緑
-- グラデーション、影は使用しない
-- CSSキャッシュ番号を `20260808m` に更新
+- Structured data: `dateModified` is now emitted as full ISO 8601 UTC DateTime with `Z` timezone.
+- Research hub canonical URL: `https://notofu.github.io/research.html`.
+- All internal navigation now points to `research.html`.
+- `/research/index.html` remains as a noindex compatibility redirect to preserve old links.
+- Sitemap now lists `research.html` instead of `research/`.

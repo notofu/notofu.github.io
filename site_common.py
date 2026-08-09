@@ -81,7 +81,7 @@ def og_meta(site: dict, title: str, description: str, canonical: str,
 def header(profile: dict, prefix: str = "", active: str = "home") -> str:
     links = [
         ("home", f"{prefix}index.html", "Home"),
-        ("research", f"{prefix}research/index.html", "Research"),
+        ("research", f"{prefix}research.html", "Research"),
         ("works", f"{prefix}publications.html", "Publications"),
         ("teaching", f"{prefix}teaching.html", "Teaching"),
         ("contact", f"{prefix}contact.html", "Contact"),

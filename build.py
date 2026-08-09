@@ -68,8 +68,18 @@ def main() -> None:
     (DIST / "teaching.html").write_text(teaching_html, encoding="utf-8")
     (DIST / "contact.html").write_text(build_contact_page(data), encoding="utf-8")
 
+    # Research is a first-class top-level page, consistent with Publications/Teaching/Contact.
+    (DIST / "research.html").write_text(build_research_index(data, content_items), encoding="utf-8")
     (DIST / "research").mkdir(exist_ok=True)
-    (DIST / "research" / "index.html").write_text(build_research_index(data, content_items), encoding="utf-8")
+    # Keep the old /research/ URL as a compatibility redirect so existing bookmarks and
+    # search-engine links do not break. The canonical URL is /research.html.
+    research_canonical = urljoin(site_url, "research.html")
+    legacy_research = f'''<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,follow"><link rel="canonical" href="{research_canonical}">
+<meta http-equiv="refresh" content="0; url=../research.html">
+<script>location.replace('../research.html' + location.hash);</script>
+<title>Research | noto Lab</title></head><body><p><a href="../research.html">Researchページへ移動</a></p></body></html>'''
+    (DIST / "research" / "index.html").write_text(legacy_research, encoding="utf-8")
     for category in CONTENT_CATEGORIES:
         (DIST / CONTENT_CATEGORIES[category]["dir"]).mkdir(exist_ok=True)
     for item in content_items:
@@ -93,7 +103,7 @@ def main() -> None:
         {"url": urljoin(site_url, "publications.html"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "teaching.html"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "contact.html"), "lastmod": date.today().isoformat()},
-        {"url": urljoin(site_url, "research/"), "lastmod": date.today().isoformat()},
+        {"url": urljoin(site_url, "research.html"), "lastmod": date.today().isoformat()},
         {"url": urljoin(site_url, "news/"), "lastmod": news_items[0].get("date") if news_items else date.today().isoformat()},
     ]
     entries.extend({"url": urljoin(site_url, x["url"]), "lastmod": x.get("updated") or x.get("date") or ""} for x in content_items)
