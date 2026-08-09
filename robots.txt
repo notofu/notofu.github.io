@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://notofu.github.io/sitemap.xml
