@@ -58,7 +58,7 @@ def parse_markdown_file(root: Path, path: Path, category: str) -> dict | None:
     tags = meta.get("tags", [])
     if isinstance(tags, str):
         tags = [x.strip() for x in tags.split(",") if x.strip()]
-    related = meta.get("relatedWorks", meta.get("related", []))
+    related = meta.get("relatedWorks", [])
     if isinstance(related, str):
         related = [x.strip() for x in related.split(",") if x.strip()]
     try:
@@ -188,9 +188,9 @@ def render_content_row(category: str, items: list[dict], prefix: str = "../") ->
 
 
 def related_works(item: dict, works: list[dict], limit: int = 4) -> list[dict]:
+    # 関連業績は Markdown の relatedWorks: で明示された記事だけに表示する。
+    # tags: や related: からの自動推測・互換補完は行わない。
     keys = [str(x).lower() for x in item.get("relatedWorks", []) if str(x).strip()]
-    if not keys:
-        keys = [str(x).lower() for x in item.get("tags", []) if len(str(x)) >= 3]
     if not keys:
         return []
     scored = []

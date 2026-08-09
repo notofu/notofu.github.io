@@ -1,20 +1,15 @@
-# アップロード手順
+# Upload instructions
 
-GitHub リポジトリ `notofu/notofu.github.io` のルートで、以下の4ファイルを上書きしてください。
+今回上書きするのは **`content_module.py` だけ**です。
 
-- `build.py`
-- `home_module.py`
-- `site_common.py`
-- `content_module.py`
+リポジトリ直下の `content_module.py` を、このフォルダ内の同名ファイルで上書きしてください。
 
-`content.json`、`contents/`、`assets/`、`styles.css`、`script.js`、`researchmap_sync.py` は変更不要です。
+## 変更後の仕様
 
-## 変更内容
+- `relatedWorks:` が未定義 → 「関連する研究業績」を表示しない
+- `relatedWorks:` が空欄 → 表示しない
+- `tags:` しかない → 表示しない
+- `related:` しかない → 表示しない
+- `relatedWorks: gaze, ICEC` のように明示 → 一致する業績だけ表示
 
-1. JSON-LD の `dateModified` を、Google が解釈しやすい完全な ISO 8601 / UTC 日時（例: `2026-08-09T02:12:52Z`）で出力します。
-2. Research の一覧ページを `/research/index.html` から `/research.html` に変更します。
-3. トップページ・ナビ・記事のパンくず・「一覧へ戻る」・Blogリンクをすべて `/research.html` に統一します。
-4. 旧 `/research/` は壊さず、`/research.html` へ転送する互換ページとして残します。
-5. sitemap の Research URL も `/research.html` に変更します。
-
-Commit 後、GitHub Actions の Deploy GitHub Pages が緑になれば完了です。
+発表年の新しい順、Worksと同じ分類バッジ表示はそのまま維持します。
